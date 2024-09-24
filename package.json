@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "name": "test",
+    "name": "testt",
     "start": "react-scripts start",
     "dev": "vite",
     "build": "vite build",
