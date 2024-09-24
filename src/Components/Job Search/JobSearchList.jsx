@@ -16,7 +16,7 @@ const JobSearchList = () => {
     const [countries, setCountries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-  
+  gi
     // Fetch countries when the component is mounted
     useEffect(() => {
       const fetchCountries = async () => {
