@@ -80,9 +80,9 @@ class Login extends Component {
                 <div className="icon d-flex align-items-center justify-content-center">
                   <span className="fas fa-user"></span>
                 </div>
-                <h3 className="text-center mb-4">Have an account?</h3>
+                <h3 className="text-center mb-4">Create account</h3>
                 <form className="login-form" onSubmit={this.handleSubmit}>
-                  <div className="form-group">
+                  <div className="form-group mb-4">
                     <input
                       type="email"
                       className="form-control rounded-left"
@@ -92,7 +92,7 @@ class Login extends Component {
                       required
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="form-group mb-4">
                     <input
                       type="text"
                       className="form-control rounded-left"
@@ -102,7 +102,7 @@ class Login extends Component {
                       required
                     />
                   </div>
-                  <div className="form-group d-flex">
+                  <div className="form-group d-flex mb-4">
                     <input
                       type="password"
                       className="form-control rounded-left"
@@ -112,17 +112,13 @@ class Login extends Component {
                       required
                     />
                   </div>
-                  <div className="form-group d-md-flex">
-                    <div className="w-50 text-md-left">
-                      <a href={" "}>Forgot Password</a>
-                    </div>
-                  </div>
-                  <div className="form-group">
+
+                  <div className="form-group d-flex justify-content-center">
                     <button
                       type="submit"
                       className="btn btn-primary rounded submit p-3 px-5"
                     >
-                      Get Started
+                      Register
                     </button>
                   </div>
                 </form>
