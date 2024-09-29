@@ -8,6 +8,7 @@ class Login extends Component {
       Email: "",
       Username: "",
       Password: "",
+      message: "", // State to hold the message
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -28,9 +29,13 @@ class Login extends Component {
     // Define your GraphQL query or mutation
     const query = `
       mutation {
-        register(input:{username: "${Username}", 
-        email: "${Email}", 
-        password: "${Password}"})
+        register(input: {
+          username: "${Username}",
+          email: "${Email}",
+          password: "${Password}"
+        }) {
+          message
+        }
       }
     `;
 
@@ -40,7 +45,6 @@ class Login extends Component {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          
         },
         body: JSON.stringify({ query }),
       });
@@ -48,15 +52,21 @@ class Login extends Component {
       const result = await response.json();
 
       if (result.data) {
-        // Handle success (e.g., save token, redirect, etc.)
-        console.log("Login successful:", result.data);
+        // Set success message in state
+        this.setState({
+          message: result.data.register.message || "Registration successful!",
+        });
       } else if (result.errors) {
-        // Handle errors (e.g., invalid credentials)
-        console.error("Error logging in:", result.errors);
+        // Set error message in state
+        this.setState({
+          message: "Error: " + result.errors[0].message,
+        });
       }
     } catch (error) {
       // Handle network or other errors
-      console.error("Network error:", error);
+      this.setState({
+        message: "Network error: " + error.message,
+      });
     }
   }
 
@@ -116,6 +126,12 @@ class Login extends Component {
                     </button>
                   </div>
                 </form>
+                {/* Display the message */}
+                {this.state.message && (
+                  <div className="alert alert-info mt-3">
+                    {this.state.message}
+                  </div>
+                )}
               </div>
             </div>
           </div>
