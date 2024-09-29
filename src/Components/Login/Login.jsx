@@ -1,18 +1,15 @@
 import "./login.css";
 import React, { Component } from "react";
-
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      Email: "",
       Username: "",
       Password: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
   // Event For Input
   handleChange(event) {
     const { name, value } = event.target;
@@ -20,51 +17,10 @@ class Login extends Component {
   }
 
   // Event For Submit
-  async handleSubmit(event) {
+  handleSubmit(event) {
     event.preventDefault();
-
-    const { Email, Username, Password } = this.state;
-
-    // Define your GraphQL query or mutation
-    const query = `
-      mutation {
-        login(email: "${Email}", username: "${Username}", password: "${Password}") {
-          token
-          user {
-            id
-            email
-            username
-          }
-        }
-      }
-    `;
-
-    //test
-    try {
-      // Send the request to the GraphQL API
-      const response = await fetch("https://your-graphql-endpoint.com/graphql", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query }),
-      });
-
-      const result = await response.json();
-
-      if (result.data) {
-        // Handle success (e.g., save token, redirect, etc.)
-        console.log("Login successful:", result.data);
-      } else if (result.errors) {
-        // Handle errors (e.g., invalid credentials)
-        console.error("Error logging in:", result.errors);
-      }
-    } catch (error) {
-      // Handle network or other errors
-      console.error("Network error:", error);
-    }
+    console.log(this.state);
   }
-
   render() {
     return (
       <section className="ftco-section">
@@ -77,16 +33,6 @@ class Login extends Component {
                 </div>
                 <h3 className="text-center mb-4">Have an account?</h3>
                 <form className="login-form" onSubmit={this.handleSubmit}>
-                  <div className="form-group">
-                    <input
-                      type="email"
-                      className="form-control rounded-left"
-                      placeholder="Email"
-                      name="Email"
-                      onChange={this.handleChange}
-                      required
-                    />
-                  </div>
                   <div className="form-group">
                     <input
                       type="text"
