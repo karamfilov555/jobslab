@@ -28,23 +28,19 @@ class Login extends Component {
     // Define your GraphQL query or mutation
     const query = `
       mutation {
-        login(email: "${Email}", username: "${Username}", password: "${Password}") {
-          token
-          user {
-            id
-            email
-            username
-          }
-        }
+        register(input:{username: "${Username}", 
+        email: "${Email}", 
+        password: "${Password}"})
       }
     `;
 
     try {
       // Send the request to the GraphQL API
-      const response = await fetch("https://your-graphql-endpoint.com/graphql", {
+      const response = await fetch("https://localhost:7111/graphql", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          
         },
         body: JSON.stringify({ query }),
       });
