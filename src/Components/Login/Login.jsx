@@ -39,6 +39,7 @@ class Login extends Component {
       }
     `;
 
+    //test
     try {
       // Send the request to the GraphQL API
       const response = await fetch("https://your-graphql-endpoint.com/graphql", {
