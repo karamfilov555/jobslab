@@ -9,7 +9,7 @@ class Login extends Component {
       Username: "",
       Password: "",
       message: "", // State to hold the message
-    };
+    }; 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
