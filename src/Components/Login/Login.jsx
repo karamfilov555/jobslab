@@ -53,7 +53,7 @@ class Login extends Component {
         localStorage.setItem("token", token); // Using local storage
 
         // Navigate to the homepage after successful login
-        this.props.navigate('/'); // Change '/' to the desired route if needed
+        this.props.navigate('/jobListPage'); // Change '/' to the desired route if needed
 
       } else if (result.errors) {
         // Handle errors
