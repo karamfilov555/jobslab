@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./register.css";
 
-class Login extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -9,7 +9,7 @@ class Login extends Component {
       Username: "",
       Password: "",
       message: "", // State to hold the message
-    }; 
+    };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -137,4 +137,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default Register;
