@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from "./withRouter"; // Import the HOC
 import "./register.css";
 
 class Register extends Component {
@@ -6,38 +7,51 @@ class Register extends Component {
     super(props);
     this.state = {
       Email: "",
-      Username: "",
       Password: "",
+      ConfirmPassword: "", // New state for confirm password
       message: "", // State to hold the message
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  // Event For Input
+  // Event for Input
   handleChange(event) {
     const { name, value } = event.target;
     this.setState({ [name]: value });
   }
 
-  // Event For Submit
+  // Event for Submit
   async handleSubmit(event) {
     event.preventDefault();
 
-    const { Email, Username, Password } = this.state;
+    const { Email, Password, ConfirmPassword } = this.state;
 
-    // Define your GraphQL query or mutation
+    // Check if password and confirm password match
+    if (Password !== ConfirmPassword) {
+      this.setState({
+        message: "Passwords do not match!",
+      });
+      return;
+    }
+
+    // Define your GraphQL mutation with variables
     const query = `
-      mutation {
-        register(input: {
-          username: "${Username}",
-          email: "${Email}",
-          password: "${Password}"
-        }) {
+      mutation Register($input: RegisterInput!) {
+        register(input: $input) {
           message
         }
       }
     `;
+
+    // Define the variables for the GraphQL mutation
+    const variables = {
+      input: {
+        email: Email,
+        password: Password,
+        confirmPassword: ConfirmPassword,  // Include confirmPassword in the input
+      },
+    };
 
     try {
       // Send the request to the GraphQL API
@@ -46,7 +60,7 @@ class Register extends Component {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, variables }),
       });
 
       const result = await response.json();
@@ -56,6 +70,9 @@ class Register extends Component {
         this.setState({
           message: result.data.register.message || "Registration successful!",
         });
+
+        // After successful registration, redirect to another page
+        this.props.navigate("/jobListPage");
       } else if (result.errors) {
         // Set error message in state
         this.setState({
@@ -88,26 +105,29 @@ class Register extends Component {
                       className="form-control rounded-left"
                       placeholder="Email"
                       name="Email"
+                      value={this.state.Email}
                       onChange={this.handleChange}
                       required
                     />
                   </div>
                   <div className="form-group mb-4">
                     <input
-                      type="text"
-                      className="form-control rounded-left"
-                      placeholder="Username"
-                      name="Username"
-                      onChange={this.handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="form-group d-flex mb-4">
-                    <input
                       type="password"
                       className="form-control rounded-left"
                       placeholder="Password"
                       name="Password"
+                      value={this.state.Password}
+                      onChange={this.handleChange}
+                      required
+                    />
+                  </div>
+                  <div className="form-group mb-4">
+                    <input
+                      type="password"
+                      className="form-control rounded-left"
+                      placeholder="Confirm Password"
+                      name="ConfirmPassword"
+                      value={this.state.ConfirmPassword}
                       onChange={this.handleChange}
                       required
                     />
@@ -137,4 +157,4 @@ class Register extends Component {
   }
 }
 
-export default Register;
+export default withRouter(Register); // Wrap your component with HOC
