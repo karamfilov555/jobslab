@@ -1,31 +1,29 @@
 import "./login.css"; // Assuming you have a similar CSS file for styles
 import React, { Component } from "react";
 import { withRouter } from './withRouter'; // Adjust the import path as necessary
+import { Link } from 'react-router-dom'; // Import Link if using react-router
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      Email: "", // Changed from Username to Email
+      Email: "",
       Password: "",
-      message: "", // State to hold message feedback
+      message: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  // Event for input changes
   handleChange(event) {
     const { name, value } = event.target;
     this.setState({ [name]: value });
   }
 
-  // Event for form submission
   async handleSubmit(event) {
     event.preventDefault();
     const { Email, Password } = this.state;
 
-    // Your GraphQL mutation
     const query = `
       mutation {
         token(username: "${Email}", password: "${Password}") {
@@ -35,7 +33,6 @@ class Login extends Component {
     `;
 
     try {
-      // Send the request to the GraphQL API
       const response = await fetch("https://localhost:7111/graphql", {
         method: "POST",
         headers: {
@@ -46,23 +43,16 @@ class Login extends Component {
 
       const result = await response.json();
 
-      // Check for errors or successful response
       if (result.data) {
-        const token = result.data.token.message; // Adjust according to your response structure
-        // Store the token in local storage (or session storage or cookies)
-        localStorage.setItem("token", token); // Using local storage
-
-        // Navigate to the homepage after successful login
-        this.props.navigate('/jobListPage'); // Change '/' to the desired route if needed
-
+        const token = result.data.token.message;
+        localStorage.setItem("token", token);
+        this.props.navigate('/jobListPage');
       } else if (result.errors) {
-        // Handle errors
         this.setState({
           message: "Error: " + result.errors[0].message,
         });
       }
     } catch (error) {
-      // Handle network errors
       this.setState({
         message: "Network error: " + error.message,
       });
@@ -80,13 +70,19 @@ class Login extends Component {
                   <span className="fas fa-user"></span>
                 </div>
                 <h3 className="text-center mb-4">Log In</h3>
+                
+                {/* Registration message with bold text */}
+                <p className="text-center">
+                  To register your free account <Link to="/registerPage"><strong>click here</strong></Link>!
+                </p>
+
                 <form className="login-form" onSubmit={this.handleSubmit}>
                   <div className="form-group">
                     <input
-                      type="email" // Change input type to email
+                      type="email"
                       className="form-control rounded-left"
                       placeholder="Email"
-                      name="Email" // Changed from Username to Email
+                      name="Email"
                       onChange={this.handleChange}
                       required
                     />
@@ -103,10 +99,10 @@ class Login extends Component {
                   </div>
                   <div className="form-group d-md-flex justify-content-center">
                     <div className="w-100 text-center">
-                      <a href={" "}>Forgot Password?</a>
+                      <a href="#">Forgot Password?</a>
                     </div>
                   </div>
-                  <div className="form-group text-center"> {/* Centering the button */}
+                  <div className="form-group text-center">
                     <button
                       type="submit"
                       className="btn btn-primary rounded submit p-3 px-5"
@@ -115,7 +111,7 @@ class Login extends Component {
                     </button>
                   </div>
                 </form>
-                {/* Display feedback message */}
+
                 {this.state.message && (
                   <div className="alert alert-info mt-3">
                     {this.state.message}
@@ -130,5 +126,4 @@ class Login extends Component {
   }
 }
 
-// Wrap the component with withRouter HOC to access the navigate function
 export default withRouter(Login);

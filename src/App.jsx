@@ -21,6 +21,7 @@ import EmployerGridPage from "./Pages/EmployerGridPage"
 import CompanyDetailsPage from "./Pages/CompanyDetailsPage"
 import PostJobPage from "./Pages/PostJobPage"
 import AddResumePage from "./Pages/AddResumePage"
+import RegisterPage from "./Pages/RegisterPage"
 import { useEffect } from "react"
 
 function App() {
@@ -48,6 +49,10 @@ function App() {
           <Route path="/companyDetailsPage" element={<CompanyDetailsPage/>}/>
           <Route path="/postJobPage" element={<PostJobPage/>}/>
           <Route path="/addResumePage" element={<AddResumePage/>}/>
+
+          <Route path="/registerPage" element={<RegisterPage/>}/>
+
+
           <Route path="/candidatePage" element={<CandidatePage/>}/>
           <Route path="/aboutPage" element={<AboutPage/>}/>
           <Route path="/blogPage" element={<BlogPage/>}/>
