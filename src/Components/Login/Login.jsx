@@ -46,7 +46,7 @@ class Login extends Component {
       if (result.data) {
         const token = result.data.token.message;
         localStorage.setItem("token", token);
-        this.props.navigate('/jobListPage');
+        this.props.navigate('/');
       } else if (result.errors) {
         this.setState({
           message: "Error: " + result.errors[0].message,
