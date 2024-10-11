@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { MultiSelect } from 'react-multi-select-component';
 
 const AddResumeArea = () => {
   const [firstName, setFirstName] = useState('');
@@ -17,26 +18,31 @@ const AddResumeArea = () => {
   const [skills, setSkills] = useState([]);
   const [measurements, setMeasurements] = useState('');
 
-  const handleLanguagesChange = (event) => {
-    const { options } = event.target;
-    const selectedLanguages = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        selectedLanguages.push(options[i].value);
-      }
-    }
-    setLanguages(selectedLanguages);
+  // Options for languages
+  const languageOptions = [
+    { value: 'ENGLISH', label: 'English' },
+    { value: 'SPANISH', label: 'Spanish' },
+    { value: 'GERMAN', label: 'German' },
+    { value: 'ITALIAN', label: 'Italian' },
+    { value: 'RUSSIAN', label: 'Russian' },
+    { value: 'BULGARIAN', label: 'Bulgarian' }
+  ];
+
+  const handleLanguagesChange = (selectedOptions) => {
+    // Set selected languages
+    setLanguages(selectedOptions.map(option => option.value));
   };
 
-  const handleSkillsChange = (event) => {
-    const { options } = event.target;
-    const selectedSkills = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        selectedSkills.push(options[i].value);
-      }
-    }
-    setSkills(selectedSkills);
+   // Options for skills
+   const skillOptions = [
+    { value: 'ACCENTS', label: 'Accents' },
+    { value: 'COMBAT_TRAINING', label: 'Combat Training' },
+    { value: 'RIDING', label: 'Riding' }
+  ];
+
+  const handleSkillsChange = (selectedOptions) => {
+    // Set selected skills
+    setSkills(selectedOptions.map(option => option.value));
   };
 
   const handleFormSubmit = async (e) => {
@@ -168,7 +174,7 @@ const AddResumeArea = () => {
             <div className="col-xl-6 col-md-6">
               <input
                 type="text"
-                placeholder="Height (in meters)"
+                placeholder="Height (in cantimeters)"
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
               />
@@ -191,28 +197,32 @@ const AddResumeArea = () => {
             </div>
             <div className="col-xl-12">
               <label>Languages:</label>
-              <select multiple={true} onChange={handleLanguagesChange}>
-                <option value="ENGLISH">English</option>
-                <option value="SPANISH">Spanish</option>
-                <option value="SERBIAN">Serbian</option>
-                <option value="BULGARIAN">Bulgarian</option>
-              </select>
+              <MultiSelect
+                options={languageOptions}
+                value={languages.map(language => ({ value: language, label: language }))}
+                onChange={handleLanguagesChange}
+                labelledBy="Select your languages"
+              />
             </div>
             <div className="col-xl-12">
               <label>Skills:</label>
-              <select multiple={true} onChange={handleSkillsChange}>
-                <option value="ACCENTS">Accents</option>
-                <option value="COMBAT_TRAINING">Combat Training</option>
-                <option value="RIDING">Riding</option>
-              </select>
-            </div>
-            <div className="col-xl-12">
-              <input
-                type="text"
-                placeholder="Measurements (S, M, L, etc.)"
-                value={measurements}
-                onChange={(e) => setMeasurements(e.target.value)}
+              <MultiSelect
+                options={skillOptions}
+                value={skills.map(skill => ({ value: skill, label: skill }))}
+                onChange={handleSkillsChange}
+                labelledBy="Select your skills"
               />
+            </div>
+              <label>Measurements:</label>
+            <div className="col-xl-6 col-md-6">
+              <select value={measurements} onChange={(e) => setMeasurements(e.target.value)}>
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+              </select>
             </div>
             <div className="col-xl-12">
               <button
