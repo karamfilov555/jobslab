@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -15,30 +15,92 @@ const AddResumeArea = () => {
   const [weight, setWeight] = useState('');
   const [location, setLocation] = useState('');
   const [languages, setLanguages] = useState([]);
+  const [languageOptions, setLanguageOptions] = useState([]);  // Dynamic languagues
   const [skills, setSkills] = useState([]);
+  const [skillOptions, setSkillOptions] = useState([]);  // Dynamic skills
   const [measurements, setMeasurements] = useState('');
 
-  // Options for languages
-  const languageOptions = [
-    { value: 'ENGLISH', label: 'English' },
-    { value: 'SPANISH', label: 'Spanish' },
-    { value: 'GERMAN', label: 'German' },
-    { value: 'ITALIAN', label: 'Italian' },
-    { value: 'RUSSIAN', label: 'Russian' },
-    { value: 'BULGARIAN', label: 'Bulgarian' }
-  ];
+  // Fetch languages from the backend
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const response = await fetch('https://localhost:7111/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4NjMwNjk3LCJleHAiOjE3Mjg2MzQyOTcsImlhdCI6MTcyODYzMDY5N30.4GajyryK80Px3nwtw7S3W4O85syiaIg9uHQD7PSokfg'
+          },
+          body: JSON.stringify({
+            query: `
+              query {
+                languages
+              }
+            `
+          })
+        });
+
+        const result1 = await response.json();
+
+        if (result1.errors) {
+          toast.error('Failed to load languages');
+        } else {
+          const fetchedLanguages = result1.data.languages.map(language => ({
+            value: language, // Assuming language value from the BE matches the expected format
+            label: language.replace(/_/g, ' ') // Format label (optional)
+          }));
+          setLanguageOptions(fetchedLanguages); // Update state with the fetched skills
+        }
+      } catch (error) {
+        toast.error('An error occurred while fetching languages');
+      }
+    };
+
+    fetchLanguages(); // Call the function to load skills when component mounts
+  }, []);
+
+
+   // Fetch skills from the backend
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const response = await fetch('https://localhost:7111/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4NjMwNjk3LCJleHAiOjE3Mjg2MzQyOTcsImlhdCI6MTcyODYzMDY5N30.4GajyryK80Px3nwtw7S3W4O85syiaIg9uHQD7PSokfg'
+          },
+          body: JSON.stringify({
+            query: `
+              query {
+                skills
+              }
+            `
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.errors) {
+          toast.error('Failed to load skills');
+        } else {
+          const fetchedSkills = result.data.skills.map(skill => ({
+            value: skill, // Assuming skill value from the BE matches the expected format
+            label: skill.replace(/_/g, ' ') // Format label (optional)
+          }));
+          setSkillOptions(fetchedSkills); // Update state with the fetched skills
+        }
+      } catch (error) {
+        toast.error('An error occurred while fetching skills');
+      }
+    };
+
+    fetchSkills(); // Call the function to load skills when component mounts
+  }, []);
 
   const handleLanguagesChange = (selectedOptions) => {
     // Set selected languages
     setLanguages(selectedOptions.map(option => option.value));
   };
-
-   // Options for skills
-   const skillOptions = [
-    { value: 'ACCENTS', label: 'Accents' },
-    { value: 'COMBAT_TRAINING', label: 'Combat Training' },
-    { value: 'RIDING', label: 'Riding' }
-  ];
 
   const handleSkillsChange = (selectedOptions) => {
     // Set selected skills
@@ -73,7 +135,7 @@ const AddResumeArea = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4NTA0MjgzLCJleHAiOjE3Mjg1MDc4ODMsImlhdCI6MTcyODUwNDI4M30.xqc-XzBle-GJK8f2B3ffu5lwPah8DBGnunQi0gh9X-w'
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4NjMwNjk3LCJleHAiOjE3Mjg2MzQyOTcsImlhdCI6MTcyODYzMDY5N30.4GajyryK80Px3nwtw7S3W4O85syiaIg9uHQD7PSokfg'
         },
         body: JSON.stringify({
           query: `
