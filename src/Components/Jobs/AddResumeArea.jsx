@@ -13,7 +13,8 @@ const AddResumeArea = () => {
   const [gender, setGender] = useState('MALE');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
-  const [location, setLocation] = useState('');
+  const [locations, setLocations] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);  // Dynamic locations
   const [languages, setLanguages] = useState([]);
   const [languageOptions, setLanguageOptions] = useState([]);  // Dynamic languagues
   const [skills, setSkills] = useState([]);
@@ -22,57 +23,22 @@ const AddResumeArea = () => {
 
   // Fetch languages from the backend
   useEffect(() => {
-    const fetchLanguages = async () => {
+    const fetchMultiselectOptions = async () => {
       try {
         const response = await fetch('https://localhost:7111/graphql', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4NjMwNjk3LCJleHAiOjE3Mjg2MzQyOTcsImlhdCI6MTcyODYzMDY5N30.4GajyryK80Px3nwtw7S3W4O85syiaIg9uHQD7PSokfg'
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4NzczMDI4LCJleHAiOjE3Mjg3NzY2MjgsImlhdCI6MTcyODc3MzAyOH0.sYLQAa7F1EJBTQHzDvaTTaSd2c3SFDWvqNYmtoVjRTw'
           },
           body: JSON.stringify({
             query: `
               query {
-                languages
-              }
-            `
-          })
-        });
-
-        const result1 = await response.json();
-
-        if (result1.errors) {
-          toast.error('Failed to load languages');
-        } else {
-          const fetchedLanguages = result1.data.languages.map(language => ({
-            value: language, // Assuming language value from the BE matches the expected format
-            label: language.replace(/_/g, ' ') // Format label (optional)
-          }));
-          setLanguageOptions(fetchedLanguages); // Update state with the fetched skills
-        }
-      } catch (error) {
-        toast.error('An error occurred while fetching languages');
-      }
-    };
-
-    fetchLanguages(); // Call the function to load skills when component mounts
-  }, []);
-
-
-   // Fetch skills from the backend
-  useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const response = await fetch('https://localhost:7111/graphql', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4NjMwNjk3LCJleHAiOjE3Mjg2MzQyOTcsImlhdCI6MTcyODYzMDY5N30.4GajyryK80Px3nwtw7S3W4O85syiaIg9uHQD7PSokfg'
-          },
-          body: JSON.stringify({
-            query: `
-              query {
-                skills
+                multiselectsOptions{
+                  skills
+                  languages
+                  locations
+                }
               }
             `
           })
@@ -81,21 +47,35 @@ const AddResumeArea = () => {
         const result = await response.json();
 
         if (result.errors) {
-          toast.error('Failed to load skills');
+          toast.error('Failed to load multiselects options');
         } else {
-          const fetchedSkills = result.data.skills.map(skill => ({
-            value: skill, // Assuming skill value from the BE matches the expected format
+          const fetchedLanguages = result.data.multiselectsOptions.languages.map(language => ({
+            value: language, // Assuming language value from the BE matches the expected format
+            label: language.replace(/_/g, ' ') // Format label (optional)
+          }));
+
+          const fetchedSkills = result.data.multiselectsOptions.skills.map(skill => ({
+            value: skill, // Assuming language value from the BE matches the expected format
             label: skill.replace(/_/g, ' ') // Format label (optional)
           }));
-          setSkillOptions(fetchedSkills); // Update state with the fetched skills
+
+          const fetchedLocations = result.data.multiselectsOptions.locations.map(location => ({
+            value: location, // Assuming language value from the BE matches the expected format
+            label: location.replace(/_/g, ' ') // Format label (optional)
+          }));
+
+          setLanguageOptions(fetchedLanguages); 
+          setSkillOptions(fetchedSkills); 
+          setLocationOptions(fetchedLocations);
         }
       } catch (error) {
-        toast.error('An error occurred while fetching skills');
+        toast.error('An error occurred while fetching languages');
       }
     };
 
-    fetchSkills(); // Call the function to load skills when component mounts
+    fetchMultiselectOptions(); 
   }, []);
+
 
   const handleLanguagesChange = (selectedOptions) => {
     // Set selected languages
@@ -105,6 +85,11 @@ const AddResumeArea = () => {
   const handleSkillsChange = (selectedOptions) => {
     // Set selected skills
     setSkills(selectedOptions.map(option => option.value));
+  };
+
+  const handleLocationsChange = (selectedOptions) => {
+    // Set selected skills
+    setLocations(selectedOptions.map(option => option.value));
   };
 
   const handleFormSubmit = async (e) => {
@@ -250,11 +235,12 @@ const AddResumeArea = () => {
               />
             </div>
             <div className="col-xl-12">
-              <input
-                type="text"
-                placeholder="Location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+            <label>Location:</label>
+              <MultiSelect
+                options={locationOptions}
+                value={locations.map(location => ({ value: location, label: location }))}
+                onChange={handleLocationsChange}
+                labelledBy="Select your locations"
               />
             </div>
             <div className="col-xl-12">
