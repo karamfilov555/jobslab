@@ -31,7 +31,6 @@ const Header2 = () => {
                                             <Link to="/">Home</Link>
                                             <ul className="sub-menu">
                                                 <li><Link to="/">Home 1</Link></li>
-                                                <li><Link to="/homePage2">Home 2</Link></li>
                                             </ul>
                                         </li>
                                         <li className="menu-has-children">

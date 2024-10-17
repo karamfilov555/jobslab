@@ -13,12 +13,6 @@ const HomePage1 = () => {
 
   console.log(isAuthenticated);
   
-  //If not authenticated, redirect to the login page
-  if (isAuthenticated) {
-    return <Navigate to="/homePage2" />;
-  }
-
-  // Render the HomePage1 content for logged-in users
   return (
     <>
       <SearchForm />

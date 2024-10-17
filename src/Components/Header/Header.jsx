@@ -1,20 +1,18 @@
 import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { JobContext } from '../../Context/JobContext';
-import { useAuth } from '../../Context/AuthProvider'; // Import useAuth
+import { useAuth } from '../../Context/AuthProvider';
 
 const Header = () => {
   const { handleOpenForm, isSticky, handleOpen } = useContext(JobContext);
-  const { isAuthenticated, logout } = useAuth(); // Get the auth status and logout function
+  const { isAuthenticated, logout } = useAuth();
 
-  // This effect will run whenever isAuthenticated changes
   useEffect(() => {
     console.log('Authentication state changed:', isAuthenticated);
-    // Additional side effects can be performed here
   }, [isAuthenticated]);
 
   return (
-    <header className="heater-transparent">
+    <header className="header-transparent">
       <div className={`jm-header-area header-sticky ${isSticky ? 'sticky' : ''}`}>
         <div className="container">
           <div className="jm-header-top d-none d-md-block">
@@ -52,7 +50,6 @@ const Header = () => {
                         <Link to="/">Home</Link>
                         <ul className="sub-menu">
                           <li><Link to="/">Home 1</Link></li>
-                          <li><Link to="/homePage2">Home 2</Link></li>
                         </ul>
                       </li>
                       {/* Other menu items */}
@@ -76,8 +73,8 @@ const Header = () => {
                   {/* Conditional rendering based on authentication status */}
                   {isAuthenticated ? (
                     <>
-                      <Link to="/postJobPage" className="jm-theme-btn d-none d-lg-block">
-                        Post Job
+                      <Link to="/profilePage" className="jm-theme-btn d-none d-lg-block">
+                        Profile
                       </Link>
                       <button
                         className="jm-theme-btn d-none d-lg-block"

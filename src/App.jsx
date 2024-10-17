@@ -12,7 +12,6 @@ import ErrorPage from "./Pages/ErrorPage";
 import ContactPage from "./Pages/ContactPage";
 import CandidateListPage from "./Pages/CandidateListPage";
 import CandidateDetailsPage from "./Pages/CandidateDetailsPage";
-import HomePage2 from "./Pages/HomePage2";
 import JobListPage from "./Pages/JobListPage";
 import JobDetailsPage from "./Pages/JobDetailsPage";
 import JobCategoryPage from "./Pages/JobCategoryPage";
@@ -45,7 +44,7 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage1 />} />
-          <Route path="/homePage2" element={<HomePage2 />} />
+          
           <Route path="/jobPage" element={<JobPage />} />
           <Route path="/jobListPage" element={<JobListPage />} />
           <Route path="/jobDetailsPage" element={<JobDetailsPage />} />
