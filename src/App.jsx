@@ -23,6 +23,8 @@ import AddResumePage from "./Pages/AddResumePage";
 import ProfilePage from "./Pages/ProfilePage";
 import RegisterPage from "./Pages/RegisterPage";
 import LoginPage from "./Pages/LogInPage";
+import ResetPasswordPage from "./Pages/ResetPasswordPage";
+import ResetConfirmPasswordPage from "./Pages/ResetConfirmPasswordPage";
 
 import { useEffect } from "react";
 import { AuthProvider } from './Context/AuthProvider'; // Adjust the path
@@ -58,6 +60,8 @@ function App() {
           {/* Login/Registe */}
           <Route path="/registerPage" element={<RegisterPage />} />
           <Route path="/loginPage" element={<LoginPage />} />
+          <Route path="/resetPasswordPage" element={<ResetPasswordPage />} />
+          <Route path="/resetConfirmPasswordPage" element={<ResetConfirmPasswordPage />} />
           <Route path="/profilePage" element={<ProfilePage />} />
 
           <Route path="/candidatePage" element={<CandidatePage />} />

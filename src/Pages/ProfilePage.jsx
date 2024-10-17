@@ -8,8 +8,6 @@ import AddResumeMain from '../Components/Main/AddResumeMain';
 const AddResumePage = () => {
   return (
     <>
-        <SearchForm/>
-        <SidePanel/>
         <Header2/>
         <AddResumeMain/>
         <Footer/>

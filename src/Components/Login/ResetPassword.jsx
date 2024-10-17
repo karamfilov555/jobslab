@@ -1,14 +1,13 @@
-import "./login.css"; // Assuming you have a similar CSS file for styles
+import "./login.css"; // Reuse the same styles for consistency
 import React, { Component } from "react";
 import { withRouter } from './withRouter'; // Adjust the import path as necessary
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { Link } from 'react-router-dom';
 
-class Login extends Component {
+class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
       Email: "",
-      Password: "",
       message: "",
     };
     this.handleChange = this.handleChange.bind(this);
@@ -22,11 +21,11 @@ class Login extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    const { Email, Password } = this.state;
+    const { Email } = this.state;
 
     const query = `
       mutation {
-        token(username: "${Email}", password: "${Password}") {
+        resetPassword(email: "${Email}") {
           message
         }
       }
@@ -43,10 +42,14 @@ class Login extends Component {
 
       const result = await response.json();
 
-      if (result.data) {
-        const token = result.data.token.message;
-        localStorage.setItem("token", token);
-        this.props.navigate('/profilePage');
+      // Clear the message state first
+      this.setState({ message: "" });
+
+      if (result.data && result.data.resetPassword) {
+        const message = result.data.resetPassword.message; // Ensure you're accessing the correct field
+        this.setState({
+          message: message,
+        });
       } else if (result.errors) {
         this.setState({
           message: "Error: " + result.errors[0].message,
@@ -67,13 +70,13 @@ class Login extends Component {
             <div className="col-md-6 col-lg-5">
               <div className="login-wrap p-4 p-md-5">
                 <div className="icon d-flex align-items-center justify-content-center">
-                  <span className="fas fa-user"></span>
+                  <span className="fas fa-key"></span>
                 </div>
-                <h3 className="text-center mb-4">Log In</h3>
-
-                {/* Registration message with bold text */}
+                <h3 className="text-center mb-4">Forgot Password</h3>
+                
+                {/* Back to login link */}
                 <p className="text-center">
-                  To register your free account <Link to="/registerPage"><strong>click here</strong></Link>!
+                  Remembered your password? <Link to="/loginPage"><strong>Log in here</strong></Link>
                 </p>
 
                 <form className="login-form" onSubmit={this.handleSubmit}>
@@ -81,34 +84,18 @@ class Login extends Component {
                     <input
                       type="email"
                       className="form-control rounded-left"
-                      placeholder="Email"
+                      placeholder="Enter your email"
                       name="Email"
                       onChange={this.handleChange}
                       required
                     />
-                  </div>
-                  <div className="form-group d-flex">
-                    <input
-                      type="password"
-                      className="form-control rounded-left"
-                      placeholder="Password"
-                      name="Password"
-                      onChange={this.handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="form-group d-md-flex justify-content-center">
-                    <div className="w-100 text-center">
-                      {/* Update the link to navigate to the Forgot Password page */}
-                      <Link to="/resetPasswordPage" className="forgot-password-link">Forgot Password?</Link>
-                    </div>
                   </div>
                   <div className="form-group text-center">
                     <button
                       type="submit"
                       className="btn btn-primary rounded submit p-3 px-5"
                     >
-                      Log In
+                      Reset Password
                     </button>
                   </div>
                 </form>
@@ -127,4 +114,4 @@ class Login extends Component {
   }
 }
 
-export default withRouter(Login);
+export default withRouter(ForgotPassword);

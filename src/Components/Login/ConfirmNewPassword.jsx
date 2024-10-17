@@ -1,15 +1,16 @@
-import "./login.css"; // Assuming you have a similar CSS file for styles
+import "./login.css"; // Reuse the same styles for consistency
 import React, { Component } from "react";
 import { withRouter } from './withRouter'; // Adjust the import path as necessary
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { Link } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-class Login extends Component {
+class NewPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      Email: "",
-      Password: "",
-      message: "",
+      password: "",
+      confirmPassword: "",
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -22,11 +23,22 @@ class Login extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    const { Email, Password } = this.state;
+    const { password, confirmPassword } = this.state;
+
+    // Check if the passwords match
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+
+    // Extract userId and token from query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('userId');
+    const token = urlParams.get('token');
 
     const query = `
       mutation {
-        token(username: "${Email}", password: "${Password}") {
+        updatePassword(userId: "${userId}", password: "${password}", confirmPassword: "${confirmPassword}") {
           message
         }
       }
@@ -37,25 +49,26 @@ class Login extends Component {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ query }),
       });
 
       const result = await response.json();
 
-      if (result.data) {
-        const token = result.data.token.message;
-        localStorage.setItem("token", token);
-        this.props.navigate('/profilePage');
+      if (result.data && result.data.updatePassword) {
+        const message = result.data.updatePassword.message;
+        toast.success(message);
+
+        // Redirect after a short delay to allow the user to read the success message
+        setTimeout(() => {
+          this.props.navigate('/loginPage');
+        }, 2000); // Adjust delay as needed (e.g., 2000ms = 2 seconds)
       } else if (result.errors) {
-        this.setState({
-          message: "Error: " + result.errors[0].message,
-        });
+        toast.error("Error: " + result.errors[0].message);
       }
     } catch (error) {
-      this.setState({
-        message: "Network error: " + error.message,
-      });
+      toast.error("Network error: " + error.message);
     }
   }
 
@@ -66,58 +79,41 @@ class Login extends Component {
           <div className="row justify-content-center">
             <div className="col-md-6 col-lg-5">
               <div className="login-wrap p-4 p-md-5">
-                <div className="icon d-flex align-items-center justify-content-center">
-                  <span className="fas fa-user"></span>
-                </div>
-                <h3 className="text-center mb-4">Log In</h3>
-
-                {/* Registration message with bold text */}
-                <p className="text-center">
-                  To register your free account <Link to="/registerPage"><strong>click here</strong></Link>!
-                </p>
+                <h3 className="text-center mb-4">Set New Password</h3>
 
                 <form className="login-form" onSubmit={this.handleSubmit}>
                   <div className="form-group">
                     <input
-                      type="email"
+                      type="password"
                       className="form-control rounded-left"
-                      placeholder="Email"
-                      name="Email"
+                      placeholder="New Password"
+                      name="password"
                       onChange={this.handleChange}
                       required
                     />
                   </div>
-                  <div className="form-group d-flex">
+                  <div className="form-group">
                     <input
                       type="password"
                       className="form-control rounded-left"
-                      placeholder="Password"
-                      name="Password"
+                      placeholder="Confirm Password"
+                      name="confirmPassword"
                       onChange={this.handleChange}
                       required
                     />
-                  </div>
-                  <div className="form-group d-md-flex justify-content-center">
-                    <div className="w-100 text-center">
-                      {/* Update the link to navigate to the Forgot Password page */}
-                      <Link to="/resetPasswordPage" className="forgot-password-link">Forgot Password?</Link>
-                    </div>
                   </div>
                   <div className="form-group text-center">
                     <button
                       type="submit"
                       className="btn btn-primary rounded submit p-3 px-5"
                     >
-                      Log In
+                      Submit
                     </button>
                   </div>
                 </form>
 
-                {this.state.message && (
-                  <div className="alert alert-info mt-3">
-                    {this.state.message}
-                  </div>
-                )}
+                {/* Toast container to show messages */}
+                <ToastContainer position="top-center" autoClose={3000} />
               </div>
             </div>
           </div>
@@ -127,4 +123,4 @@ class Login extends Component {
   }
 }
 
-export default withRouter(Login);
+export default withRouter(NewPassword);
