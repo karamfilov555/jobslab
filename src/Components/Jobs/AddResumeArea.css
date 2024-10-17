@@ -1,0 +1,32 @@
+.existing-photos-list {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.photo-item {
+  width: 150px;
+  height: auto;
+}
+
+.existing-photo {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.photo-preview-box {
+  margin-bottom: 10px;
+}
+
+.photo-preview {
+  width: 150px;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
