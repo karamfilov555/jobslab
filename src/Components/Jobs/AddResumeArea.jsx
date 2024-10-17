@@ -25,11 +25,12 @@ const AddResumeArea = () => {
   useEffect(() => {
     const fetchMultiselectOptions = async () => {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch('https://localhost:7111/graphql', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4NzczMDI4LCJleHAiOjE3Mjg3NzY2MjgsImlhdCI6MTcyODc3MzAyOH0.sYLQAa7F1EJBTQHzDvaTTaSd2c3SFDWvqNYmtoVjRTw'
+            "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({
             query: `
@@ -116,17 +117,18 @@ const AddResumeArea = () => {
     const formattedDate = date ? date.toISOString().split('T')[0] : null;
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch('https://localhost:7111/graphql', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4NjMwNjk3LCJleHAiOjE3Mjg2MzQyOTcsImlhdCI6MTcyODYzMDY5N30.4GajyryK80Px3nwtw7S3W4O85syiaIg9uHQD7PSokfg'
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           query: `
             mutation {
               upsertUserProfile(
-                userId: "cfa7c44a-daca-4790-85b2-beb92878929e", 
+                userId: "c4ce9d2b-90dd-4dd4-869e-c94b0796d61a", 
                 input: {
                   dateOfBirth: "${formattedDate}",
                   eyeColor: "${eyeColor}",
@@ -166,7 +168,7 @@ const AddResumeArea = () => {
       <div className="container">
         <div className="row align-items-center justify-content-center text-center">
           <div className="col-xl-8">
-            <h4 className="jm-job-acc-title">Create your resume and put it online.</h4>
+            <h4 className="jm-job-acc-title">Create your profile and put it online.</h4>
           </div>
         </div>
         <div className="jm-post-job-wrapper mb-40">

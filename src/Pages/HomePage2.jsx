@@ -19,8 +19,6 @@ const HomePage2 = () => {
 
   return (
     <>
-    <SearchForm/>
-    <SidePanel/>
     <Header2/>
     <HomePageMain2/>
     <Footer2/>

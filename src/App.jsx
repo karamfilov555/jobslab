@@ -21,6 +21,7 @@ import EmployerGridPage from "./Pages/EmployerGridPage";
 import CompanyDetailsPage from "./Pages/CompanyDetailsPage";
 import PostJobPage from "./Pages/PostJobPage";
 import AddResumePage from "./Pages/AddResumePage";
+import ProfilePage from "./Pages/ProfilePage";
 import RegisterPage from "./Pages/RegisterPage";
 import LoginPage from "./Pages/LogInPage";
 
@@ -58,7 +59,7 @@ function App() {
           {/* Login/Registe */}
           <Route path="/registerPage" element={<RegisterPage />} />
           <Route path="/loginPage" element={<LoginPage />} />
-
+          <Route path="/profilePage" element={<ProfilePage />} />
 
           <Route path="/candidatePage" element={<CandidatePage />} />
           <Route path="/aboutPage" element={<AboutPage />} />

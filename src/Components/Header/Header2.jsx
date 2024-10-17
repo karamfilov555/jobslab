@@ -7,19 +7,15 @@ const Header2 = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        // Perform logout logic here, e.g., clearing auth tokens or calling an API
-        localStorage.removeItem("token"); // Example: Remove token from localStorage
-        // Any other cleanup logic like updating context or state if needed.
-        
-        // Redirect to the login page after logging out
-        navigate('/');
+        localStorage.removeItem("token"); // Remove token from localStorage
+        navigate('/'); // Redirect to the home page after logging out
     };
 
     return (
         <header className="heater-transparent">
             <div className={`jm-header-area-2 jm_border_bottom jm-header-padding header-sticky ${isSticky ? 'sticky' : ''}`}>
                 <div className="container">
-                    <div className="row align-items-center ">
+                    <div className="row align-items-center">
                         <div className="col-xl-3 col-lg-3 col-7">
                             <div className="jm-header-logo jm-header-logo-2">
                                 <Link className="jm-logo" to="/">
@@ -83,10 +79,14 @@ const Header2 = () => {
                         </div>
                         <div className="col-xl-3 col-lg-3 col-5">
                             <div className="jm-header-right jm-header-right-2 text-end d-flex align-items-center justify-content-end">
-                                <Link to="#" className="jm-search jm-header-action-search" role="button" onClick={handleOpenForm}>
-                                    <i className="fal fa-search"></i>
+                                <Link to="/profilePage" className="jm-theme-btn jm-theme-btn-2 d-none d-lg-block">
+                                    Profile
                                 </Link>
-                                <button onClick={handleLogout} className="jm-theme-btn jm-theme-btn-2 d-none d-lg-block">
+                                <button
+                                    onClick={handleLogout}
+                                    className="jm-theme-btn jm-theme-btn-2 d-none d-lg-block"
+                                    style={{ marginLeft: '10px' }}
+                                >
                                     Logout
                                 </button>
                                 <div className="jm-navbar-mobile-sign side-toggle d-lg-none d-inline-block" role="button" onClick={handleOpen}>

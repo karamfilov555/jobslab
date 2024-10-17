@@ -58,6 +58,7 @@ const PostJobArea = () => {
     }
 
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.post(
         'https://localhost:7111/graphql',  // Replace with your GraphQL endpoint
         formData,
@@ -65,7 +66,7 @@ const PostJobArea = () => {
           headers: {
             'Content-Type': 'multipart/form-data',
             'GraphQL-Preflight': 'true',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjZmE3YzQ0YS1kYWNhLTQ3OTAtODViMi1iZWI5Mjg3ODkyOWUiLCJ1bmlxdWVfbmFtZSI6ImthcmFtZmlsb3Y1NTVAZ21haWwuY29tIiwibmJmIjoxNzI4MjE4NDA3LCJleHAiOjE3MjgyMjIwMDcsImlhdCI6MTcyODIxODQwN30.zYiTi6Zwaw-FLEu48x9ygyIGJdAYFSYgE7Djb3AFpQs'
+            "Authorization": `Bearer ${token}`
           },
         }
       );
