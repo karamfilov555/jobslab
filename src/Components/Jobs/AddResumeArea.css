@@ -1,12 +1,13 @@
 .existing-photos-list {
   display: flex;
-  justify-content: center;
   gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
+  overflow-x: auto; /* Makes the container horizontally scrollable */
+  padding: 10px;
+  scroll-behavior: smooth; /* Smooth scrolling effect */
 }
 
 .photo-item {
+  flex: 0 0 auto; /* Prevents items from shrinking */
   width: 150px;
   height: auto;
 }
