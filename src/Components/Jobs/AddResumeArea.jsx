@@ -34,7 +34,7 @@ const AddResumeArea = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1ZGRlOWY5MC0xNWFmLTQ3NTktOTNlNC1iYjVmMzlkZjdmNDYiLCJ1bmlxdWVfbmFtZSI6Im1paGFpbC5rYXRzYXJvd0BnbWFpbC5jb20iLCJuYmYiOjE3MjkyNTM2ODUsImV4cCI6MTcyOTI1NzI4NSwiaWF0IjoxNzI5MjUzNjg1fQ.6FECvG_iJA4kYc1td2w7diUVKYZjCo5dIxVY8u-R4Bk`
+            "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({
             query: `

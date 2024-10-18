@@ -25,18 +25,14 @@ class Login extends Component {
     event.preventDefault();
     const { Email, Password } = this.state;
 
+    // Updated mutation query
     const query = `
-      mutation Login($email: String!, $password: String!) {
-        login(input: { email: $email, password: $password }) {
+      mutation {
+        token(username: "${Email}", password: "${Password}") {
           message
         }
       }
     `;
-
-    const variables = {
-      email: Email,
-      password: Password,
-    };
 
     try {
       const response = await fetch("https://localhost:7111/graphql", {
@@ -44,21 +40,18 @@ class Login extends Component {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query, variables }),
+        body: JSON.stringify({ query }),
       });
 
       const result = await response.json();
 
-      if (result.data && result.data.login) {
-        const message = result.data.login.message;
-
-        if (message === "Login successful!") {
+      if (result.data && result.data.token) {
+        const message = result.data.token.message;
+        
           localStorage.setItem("token", message);
           toast.success("Login successful!");
-          this.props.navigate('/profilePage');
-        } else {
-          toast.error("Incorrect credentials, please try again.");
-        }
+          this.props.navigate('/');
+          
       } else if (result.errors) {
         const errorMessage = result.errors.map(err => err.message).join(", ");
         toast.error("Error: " + errorMessage);
