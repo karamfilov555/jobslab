@@ -72,7 +72,7 @@ class Register extends Component {
         });
 
         // After successful registration, redirect to another page
-        this.props.navigate("/jobListPage");
+        this.props.navigate("/loginPage");
       } else if (result.errors) {
         // Set error message in state
         this.setState({

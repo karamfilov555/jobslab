@@ -29,11 +29,12 @@ const AddResumeArea = () => {
     const fetchMultiselectOptions = async () => {
       try {
         const token = localStorage.getItem('token');
+        console.log(token);
         const response = await fetch('https://localhost:7111/graphql', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJjNGNlOWQyYi05MGRkLTRkZDQtODY5ZS1jOTRiMDc5NmQ2MWEiLCJ1bmlxdWVfbmFtZSI6Im1paGFpbC5rYXRzYXJvd0BnbWFpbC5jb20iLCJuYmYiOjE3MjkxOTgwNDEsImV4cCI6MTcyOTIwMTY0MSwiaWF0IjoxNzI5MTk4MDQxfQ.MMdDU4zvzSkMKfOdO65Agrwf4zDXTrnsYsbleqWxsrY`
+            "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiI1ZGRlOWY5MC0xNWFmLTQ3NTktOTNlNC1iYjVmMzlkZjdmNDYiLCJ1bmlxdWVfbmFtZSI6Im1paGFpbC5rYXRzYXJvd0BnbWFpbC5jb20iLCJuYmYiOjE3MjkyNTM2ODUsImV4cCI6MTcyOTI1NzI4NSwiaWF0IjoxNzI5MjUzNjg1fQ.6FECvG_iJA4kYc1td2w7diUVKYZjCo5dIxVY8u-R4Bk`
           },
           body: JSON.stringify({
             query: `

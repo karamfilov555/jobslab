@@ -8,7 +8,7 @@ const JobListMain = () => {
   const [error, setError] = useState(null); // State to handle errors
 
   useEffect(() => {
-    // Function to fetch castings from GraphQL API
+    // Function to fetch castings from GraphQL API  
     const fetchCastings = async () => {
       const token = localStorage.getItem('token'); // Retrieve token from local storage
 
