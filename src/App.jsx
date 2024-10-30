@@ -25,6 +25,7 @@ import RegisterPage from "./Pages/RegisterPage";
 import LoginPage from "./Pages/LogInPage";
 import ResetPasswordPage from "./Pages/ResetPasswordPage";
 import ResetConfirmPasswordPage from "./Pages/ResetConfirmPasswordPage";
+import ProtectedRoute from './Context/ProtectedRoute';
 
 import { useEffect } from "react";
 
@@ -46,7 +47,7 @@ function App() {
           <Route path="/" element={<HomePage1 />} />
           
           <Route path="/jobPage" element={<JobPage />} />
-          <Route path="/jobListPage" element={<JobListPage />} />
+          {/* <Route path="/jobListPage" element={<JobListPage />} /> */}
           <Route path="/jobDetailsPage" element={<JobDetailsPage />} />
           <Route path="/jobCategoryPage" element={<JobCategoryPage />} />
           <Route path="/employerListPage" element={<EmployerListPage />} />
@@ -54,6 +55,11 @@ function App() {
           <Route path="/companyDetailsPage" element={<CompanyDetailsPage />} />
           <Route path="/postJobPage" element={<PostJobPage />} />
           <Route path="/addResumePage" element={<AddResumePage />} />
+
+          {/* Protected pages, visible only for logged users */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/jobListPage" element={<JobPage />} />
+          </Route>
 
           {/* Login/Registe */}
           <Route path="/registerPage" element={<RegisterPage />} />
