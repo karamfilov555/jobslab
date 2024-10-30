@@ -12,9 +12,9 @@ import CallToAction from '../Call To Action/CallToAction'
 const HomeMain1 = () => {
   return (
     <main className='home-page-1'>
+        <Category/>
         <Banner/>
         <About/>
-        <Category/>
         <Jobs/>
         <VideoArea/>
         <Candidates/>

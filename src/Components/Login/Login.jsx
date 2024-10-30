@@ -38,16 +38,16 @@ const Login = () => {
       });
 
       const result = await response.json();
-
-      if (result.data && result.data.token) {
+      if (response.status === 200)
+      {
         const tokenMessage = result.data.token.message;
-        console.log(tokenMessage);
-
+        
         localStorage.setItem("token", tokenMessage);
         toast.success("Login successful!");
         login(tokenMessage);
         navigate("/");
-      } else if (result.errors) {
+      }
+      else {
         const errorMessage = result.errors.map((err) => err.message).join(", ");
         toast.error("Error: " + errorMessage);
         setMessage("Error: " + errorMessage);
