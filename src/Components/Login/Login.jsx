@@ -1,34 +1,28 @@
-import React, { Component } from "react";
-import { withRouter } from './withRouter'; // Adjust the import path as necessary
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../Context/AuthProvider";
 
-class Login extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      Email: "",
-      Password: "",
-      message: "",
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  handleChange(event) {
+  const handleChange = (event) => {
     const { name, value } = event.target;
-    this.setState({ [name]: value });
-  }
+    if (name === "Email") setEmail(value);
+    if (name === "Password") setPassword(value);
+  };
 
-  async handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const { Email, Password } = this.state;
 
-    // Updated mutation query
     const query = `
       mutation {
-        token(username: "${Email}", password: "${Password}") {
+        token(username: "${email}", password: "${password}") {
           message
         }
       }
@@ -46,90 +40,93 @@ class Login extends Component {
       const result = await response.json();
 
       if (result.data && result.data.token) {
-        const message = result.data.token.message;
-        
-          localStorage.setItem("token", message);
-          toast.success("Login successful!");
-          this.props.navigate('/');
-          
+        const tokenMessage = result.data.token.message;
+        console.log(tokenMessage);
+
+        localStorage.setItem("token", tokenMessage);
+        toast.success("Login successful!");
+        login(tokenMessage);
+        navigate("/");
       } else if (result.errors) {
-        const errorMessage = result.errors.map(err => err.message).join(", ");
+        const errorMessage = result.errors.map((err) => err.message).join(", ");
         toast.error("Error: " + errorMessage);
-        this.setState({
-          message: "Error: " + errorMessage,
-        });
+        setMessage("Error: " + errorMessage);
       }
     } catch (error) {
       toast.error("Network error: " + error.message);
-      this.setState({
-        message: "Network error: " + error.message,
-      });
+      setMessage("Network error: " + error.message);
     }
-  }
+  };
 
-  render() {
-    return (
-      <section className="ftco-section">
-        <div className="container">
-          <div className="row justify-content-center">
-            <div className="col-md-6 col-lg-5">
-              <div className="login-wrap p-4 p-md-5">
-                <div className="icon d-flex align-items-center justify-content-center">
-                  <span className="fas fa-user"></span>
-                </div>
-                <h3 className="text-center mb-4">Log In</h3>
-                <p className="text-center">
-                  To register your free account <Link to="/registerPage"><strong>click here</strong></Link>!
-                </p>
-
-                <form className="login-form" onSubmit={this.handleSubmit}>
-                  <div className="form-group">
-                    <input
-                      type="email"
-                      className="form-control rounded-left"
-                      placeholder="Email"
-                      name="Email"
-                      onChange={this.handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="form-group d-flex">
-                    <input
-                      type="password"
-                      className="form-control rounded-left"
-                      placeholder="Password"
-                      name="Password"
-                      onChange={this.handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="form-group d-md-flex justify-content-center">
-                    <div className="w-100 text-center">
-                      <Link to="/resetPasswordPage" className="forgot-password-link">Forgot Password?</Link>
-                    </div>
-                  </div>
-                  <div className="form-group text-center">
-                    <button
-                      type="submit"
-                      className="btn btn-primary rounded submit p-3 px-5"
-                    >
-                      Log In
-                    </button>
-                  </div>
-                </form>
-
-                {this.state.message && (
-                  <div className="alert alert-info mt-3">
-                    {this.state.message}
-                  </div>
-                )}
+  return (
+    <section className="ftco-section">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-md-6 col-lg-5">
+            <div className="login-wrap p-4 p-md-5">
+              <div className="icon d-flex align-items-center justify-content-center">
+                <span className="fas fa-user"></span>
               </div>
+              <h3 className="text-center mb-4">Log In</h3>
+              <p className="text-center">
+                To register your free account{" "}
+                <Link to="/registerPage">
+                  <strong>click here</strong>
+                </Link>
+                !
+              </p>
+
+              <form className="login-form" onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <input
+                    type="email"
+                    className="form-control rounded-left"
+                    placeholder="Email"
+                    name="Email"
+                    value={email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="form-group d-flex">
+                  <input
+                    type="password"
+                    className="form-control rounded-left"
+                    placeholder="Password"
+                    name="Password"
+                    value={password}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="form-group d-md-flex justify-content-center">
+                  <div className="w-100 text-center">
+                    <Link to="/resetPasswordPage" className="forgot-password-link">
+                      Forgot Password?
+                    </Link>
+                  </div>
+                </div>
+                <div className="form-group text-center">
+                  <button
+                    type="submit"
+                    className="btn btn-primary rounded submit p-3 px-5"
+                  >
+                    Log In
+                  </button>
+                </div>
+              </form>
+
+              {message && (
+                <div className="alert alert-info mt-3">
+                  {message}
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </section>
-    );
-  }
-}
+      </div>
+    </section>
+  );
+};
 
-export default withRouter(Login);
+export default Login;

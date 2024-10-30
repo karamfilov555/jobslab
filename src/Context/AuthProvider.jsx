@@ -1,33 +1,44 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-// Create the Auth context
 const AuthContext = createContext();
 
-// Custom hook to use the Auth context
-export const useAuth = () => useContext(AuthContext);
-
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [token, setToken] = useState(null);
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    // Check if a token exists in localStorage when the app loads
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token); // Set authentication status based on token existence
-  }, []);
+    // Check if a token exists in localStorage on component mount
+    useEffect(() => {
+        const savedToken = localStorage.getItem('token');
+        if (savedToken) {
+            setToken(savedToken);
+            setIsAuthenticated(true);
+        }
+    }, []);
 
-  const login = (token) => {
-    localStorage.setItem('token', token);
-    setIsAuthenticated(true); // Update the state to reflect authentication
-  };
+    // Function to handle login
+    const login = (newToken) => {
+        localStorage.setItem('token', newToken);
+        setToken(newToken);
+        setIsAuthenticated(true);
+        navigate('/');  // Redirect to the home page
+    };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false); // Update the state to reflect logout
-  };
+    // Function to handle logout
+    const logout = () => {
+        localStorage.removeItem('token');
+        setToken(null);
+        setIsAuthenticated(false);
+        navigate('/');
+    };
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, token, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
+
+// Custom hook to access auth context
+export const useAuth = () => useContext(AuthContext);

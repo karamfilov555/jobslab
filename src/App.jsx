@@ -27,7 +27,6 @@ import ResetPasswordPage from "./Pages/ResetPasswordPage";
 import ResetConfirmPasswordPage from "./Pages/ResetConfirmPasswordPage";
 
 import { useEffect } from "react";
-import { AuthProvider } from './Context/AuthProvider'; // Adjust the path
 
 function App() {
   const ScrollToTop = () => {
@@ -41,8 +40,7 @@ function App() {
   };
 
   return (
-    <AuthProvider>
-      <Router>
+      <>
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage1 />} />
@@ -76,8 +74,7 @@ function App() {
           <Route path="/candidateDetailsPage" element={<CandidateDetailsPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </>
   );
 }
 

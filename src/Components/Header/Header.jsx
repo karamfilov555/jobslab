@@ -7,7 +7,7 @@ const Header = () => {
   const { handleOpenForm, isSticky, handleOpen } = useContext(JobContext);
   const { isAuthenticated, logout } = useAuth();
 
-  useEffect(() => {
+  useEffect(() => { 
     console.log('Authentication state changed:', isAuthenticated);
   }, [isAuthenticated]);
 

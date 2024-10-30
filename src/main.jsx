@@ -10,6 +10,8 @@ import 'swiper/css/autoplay';
 import 'react-toastify/dist/ReactToastify.css';
 import 'rc-slider/assets/index.css';
 import { ToastContainer } from 'react-toastify';
+import { AuthProvider } from './Context/AuthProvider';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -26,7 +28,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         pauseOnHover
         theme="light"
       />
+      <Router>
+      <AuthProvider>
       <App />
+      </AuthProvider>
+      </Router>
     </JobContextProvider>
   </React.StrictMode>
 );
