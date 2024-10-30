@@ -1,24 +1,71 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import JobVideoModal from './JobVideoModal'
 import AccordionSection from './AccordionSection'
+import React, { useEffect, useState } from 'react';
+import CountdownTimer from "../Category Area/CountDownTimer";
 
-const SingleJobDetails = () => {
+    const d = `
+    query {
+        castingDetails(castingId: $id) {
+        id
+        title
+        description
+        imageUrl
+        deadline
+        location
+        }
+    }
+    `;
+
+const SingleJobDetails = ({ jobId }) => {
+    const [casting, setCasting] = useState([]);
+
+    const query = d.replace('$id', `${jobId}`);
+
+    useEffect(() => {
+        const fetchCastings = async () => {
+          try {
+            const token = localStorage.getItem("token");
+    
+            const response = await fetch("https://localhost:7111/graphql", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ query }),
+            });
+    
+            const result = await response.json();
+            console.log(response.status);
+            if (response.ok) {
+              setCasting(result.data.castingDetails);
+            } else {
+              throw new Error("Failed to fetch data.");
+            }
+          } catch (error) {
+            setError("Network error: " + error.message);
+          }
+        };
+        fetchCastings();
+      }, []);
+    
+
   return (
     <div className="container">
                 <div className="jm-job-wrap pt-100 pb-60">
                     <div className="row">
                         <div className="col-xl-8 col-lg-8">
                             <div className="jm-job-content-wrapp">
-                                <img className="w-100 mb-40" src="assets/img/blog/5.jpg" alt="img"/>
+                                <img className="w-100 mb-40" src={casting.imageUrl} alt="img"/>
                                 <div className="jm-job-content-title-wrapper mb-35">
                                     <div className="jm-job-content-title-text-wrapp">
                                         <div className="jm-job-content-title-text">
                                             <div className="jm-job-content-title-img">
-                                                <img src="assets/img/job/meta.png" alt="img"/>
+                                                <img src={casting.imageUrl} alt="img"/>
                                             </div>
                                             <div className="jm-job-content-title-bottom">
-                                                <h4 className="jm-job-content-title">PHP/Laravel Developer</h4>
+                                                <h4 className="jm-job-content-title">{casting.title}</h4>
                                                 <span className="jm-job-content-title-meta"><i className="fa-thin fa-user"></i> 11 Vacancies</span>
                                                 <span className="jm-job-content-title-rating">
                                                     <span className="jm-job-rating-text">5</span>
@@ -156,13 +203,13 @@ const SingleJobDetails = () => {
                                     <div className="jm-job-sidebar-inner-content">
                                         <JobVideoModal/>
                                         <ul className="jm-job-sidebar-review-list mb-15">
-                                            <li><i className="fa-thin fa-house-blank"></i> <span className="jm-job-review-label">Title : </span> UI Designer</li>
+                                            <li><i className="fa-thin fa-house-blank"></i> <span className="jm-job-review-label">Title : </span> {casting.title}</li>
                                             <li><i className="fa-thin fa-heart"></i> <span className="jm-job-review-label">Experience : </span> 02 Years</li>
-                                            <li><i className="fa-thin fa-location-crosshairs"></i> <span className="jm-job-review-label">Location : </span> New York, USA</li>
+                                            <li><i className="fa-thin fa-location-crosshairs"></i> <span className="jm-job-review-label">Location : </span>{casting.location}</li>
                                             <li><i className="fa-thin fa-sack-dollar"></i> <span className="jm-job-review-label">Salary : </span> $15000 - $30000</li>
                                             <li><i className="fa-thin fa-graduation-cap"></i> <span className="jm-job-review-label">Qualification : </span> Bachelor Degree</li>
                                             <li><i className="fa-thin fa-building"></i> <span className="jm-job-review-label">Industry : </span> Private</li>
-                                            <li><i className="fa-thin fa-timer"></i> <span className="jm-job-review-label">Posted : </span> 2 Hours Ago</li>
+                                            <li><i className="fa-thin fa-timer"></i> <span className="jm-job-review-label">Deadline : </span> <CountdownTimer deadline={casting.deadline} /></li>
                                         </ul>
                                         <div className="jm-job-sidebar-overview-buttons">
                                             <Link to="/postJobPage" className="jm-job-overview-btn">Apply Now <i className="fa-thin fa-arrow-right-long"></i></Link>

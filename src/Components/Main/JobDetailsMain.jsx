@@ -2,13 +2,11 @@ import React from 'react'
 import Breadcrumb from '../Breadcrumb/Breadcrumb'
 import SingleJobDetails from '../Jobs/SingleJobDetails'
 
-const JobDetailsMain = () => {
+const JobDetailsMain = ({ jobId }) => {
   return (
-    <main>
-        <Breadcrumb topic={'Job Details'} topicSpan={'Job Details'}/>
-        <SingleJobDetails/>
-    </main>
-  )
-}
-
+    <div>
+      <SingleJobDetails jobId={jobId} /> {/* Pass `jobId` to SingleJobDetails */}
+    </div>
+  );
+};
 export default JobDetailsMain

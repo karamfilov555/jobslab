@@ -35,65 +35,65 @@ const JobContextProvider = ({ children }) => {
   const [jobs, setJobs] = useState([]); // State to hold jobs
   const [filteredJobs, setFilteredJobs] = useState([]);
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error("No token found. Please login first.");
-        return;
-      }
+  // useEffect(() => {
+  //   const fetchJobs = async () => {
+  //     const token = localStorage.getItem('token');
+  //     if (!token) {
+  //       console.error("No token found. Please login first.");
+  //       return;
+  //     }
 
-      const decodedToken = jwtDecode(token); // Use named import
-      const userId = decodedToken.nameid;
+  //     const decodedToken = jwtDecode(token); // Use named import
+  //     const userId = decodedToken.nameid;
 
-      const query = `
-        query {
-          myApplications(userId: "${userId}") {
-            id
-            title
-            description
-          }
-        }
-      `;
+  //     const query = `
+  //       query {
+  //         myApplications(userId: "${userId}") {
+  //           id
+  //           title
+  //           description
+  //         }
+  //       }
+  //     `;
 
-      try {
-        const response = await fetch("https://localhost:7111/graphql", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({ query }),
-        });
+  //     try {
+  //       const response = await fetch("https://localhost:7111/graphql", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           "Authorization": `Bearer ${token}`
+  //         },
+  //         body: JSON.stringify({ query }),
+  //       });
 
-        const result = await response.json();
+  //       const result = await response.json();
 
-        if (result.errors) {
-          console.error(result.errors[0].message);
-        } else {
-          const fetchedJobs = result.data.myApplications.map(application => ({
-            id: application.id,
-            imgSrc: 'path/to/default/image.jpg', // Default image
-            jobTitle: application.title,
-            company: 'Default Company', // Mocked value
-            location: 'Default Location', // Mocked value
-            salary: 5000, // Mocked value
-            postedTime: 'Just now', // Mocked value
-            jobTime: 'Full Time', // Mocked value
-            vacancies: 1, // Mocked value
-            description: application.description,
-          }));
+  //       if (result.errors) {
+  //         console.error(result.errors[0].message);
+  //       } else {
+  //         const fetchedJobs = result.data.myApplications.map(application => ({
+  //           id: application.id,
+  //           imgSrc: 'path/to/default/image.jpg', // Default image
+  //           jobTitle: application.title,
+  //           company: 'Default Company', // Mocked value
+  //           location: 'Default Location', // Mocked value
+  //           salary: 5000, // Mocked value
+  //           postedTime: 'Just now', // Mocked value
+  //           jobTime: 'Full Time', // Mocked value
+  //           vacancies: 1, // Mocked value
+  //           description: application.description,
+  //         }));
 
-          setJobs(fetchedJobs);
-          setFilteredJobs(fetchedJobs); // Initialize filteredJobs with fetched data
-        }
-      } catch (err) {
-        console.error("Network error: " + err.message);
-      }
-    };
+  //         setJobs(fetchedJobs);
+  //         setFilteredJobs(fetchedJobs); // Initialize filteredJobs with fetched data
+  //       }
+  //     } catch (err) {
+  //       console.error("Network error: " + err.message);
+  //     }
+  //   };
 
-    fetchJobs(); // Call the function to fetch jobs
-  }, []); // Empty dependency array to run once on mount
+  //   fetchJobs(); // Call the function to fetch jobs
+  // }, []); // Empty dependency array to run once on mount
 
   // Jobs Filter
   const filterJobsByTime = (selectedTimes) => {
