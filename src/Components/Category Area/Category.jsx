@@ -84,9 +84,9 @@ const Category = () => {
                     <h4 className="jm-cat-title-new">
                       <Link to={`/jobDetailsPage/${casting.id}`}>{casting.title}</Link>
                     </h4>
-                    <p className="jm-job-posted-new">
+                    <div className="jm-job-posted-new">
                       Deadline: <CountdownTimer deadline={casting.deadline} />
-                    </p>
+                      </div>
                   </div>
                 </div>
               </div>
