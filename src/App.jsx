@@ -26,6 +26,7 @@ import LoginPage from "./Pages/LogInPage";
 import ResetPasswordPage from "./Pages/ResetPasswordPage";
 import ResetConfirmPasswordPage from "./Pages/ResetConfirmPasswordPage";
 import ProtectedRoute from './Context/ProtectedRoute';
+import ApplyFOrCastingPage from './Pages/ApplyForCastingPage';
 
 import { useEffect } from "react";
 
@@ -55,10 +56,11 @@ function App() {
           <Route path="/companyDetailsPage" element={<CompanyDetailsPage />} />
           <Route path="/postJobPage" element={<PostJobPage />} />
           <Route path="/addResumePage" element={<AddResumePage />} />
-
+          <Route path="/applyForCastingPage" element={<ApplyFOrCastingPage />} />
           {/* Protected pages, visible only for logged users */}
           <Route element={<ProtectedRoute />}>
             <Route path="/jobListPage" element={<JobPage />} />
+            
           </Route>
 
           {/* Login/Registe */}

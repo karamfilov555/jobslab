@@ -1,0 +1,86 @@
+/* ApplyCasting.css */
+
+.jm-post-job-area {
+    padding-top: 95px;
+    padding-bottom: 60px;
+    background-color: #f8f9fa;
+  }
+  
+  .jm-post-job-wrapper {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .jm-post-job-wrapper h4 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .jm-post-job-wrapper input,
+  .jm-post-job-wrapper textarea,
+  .jm-post-job-wrapper select,
+  .jm-post-job-wrapper .form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .jm-post-job-wrapper .form-control.date-picker-input {
+    cursor: pointer;
+  }
+  
+  .jm-post-job-wrapper textarea {
+    resize: vertical;
+  }
+  
+  .jm-post-job-wrapper button {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s ease;
+  }
+  
+  .jm-post-job-wrapper button:hover {
+    background-color: #0056b3;
+  }
+  
+  .photo-preview-box {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .photo-preview {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .existing-photos-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .photo-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
