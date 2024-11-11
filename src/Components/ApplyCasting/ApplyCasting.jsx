@@ -48,7 +48,7 @@ const ApplyCasting = () => {
 
         const query = `
           query {
-            castingDetails(castingId: ${jobId}) {
+            castingDetails(castingId: 1) {
               id
               title
               description
@@ -143,9 +143,44 @@ const ApplyCasting = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitted answers:", answers); // Log answers for dynamic questions
 
-    // Proceed with form submission logic here
+    const token = localStorage.getItem('token');
+    const userId = "5dde9f90-15af-4759-93e4-bb5f39df7f46"; // Replace with actual user ID or email
+
+    // Prepare answers array with questionId and answerText
+    const formattedAnswers = questions.map((question) => ({
+      questionId: question.id,
+      answerText: answers[question.id] || "", // Get the answer from answers state, default to empty string if not found
+    }));
+
+    const query = `
+      mutation {
+        applyForCasting(castingId: ${jobId}, userId: "${userId}", answers: ${JSON.stringify(formattedAnswers).replace(/"([^"]+)":/g, '$1:')}) {
+          message
+        }
+      }
+    `;
+
+    try {
+      const response = await fetch("https://localhost:7111/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ query }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        toast.success(result.data.applyForCasting.message || "Application submitted successfully");
+      } else {
+        throw new Error(result.errors[0]?.message || "Failed to apply for casting");
+      }
+    } catch (error) {
+      console.error("Error applying for casting:", error);
+      toast.error("An error occurred while submitting your application.");
+    }
   };
 
   return (
@@ -162,7 +197,7 @@ const ApplyCasting = () => {
                 placeholder="Job Title"
                 value={jobTitle}
                 onChange={(e) => setJobTitle(e.target.value)}
-                required
+                // required
                 className="form-control"
               />
             </div>
@@ -175,7 +210,7 @@ const ApplyCasting = () => {
                 onChange={(selectedDate) => setDate(selectedDate)}
                 placeholderText="Select Date"
                 className="form-control date-picker-input"
-                required
+                // required
               />
             </div>
 
@@ -211,7 +246,7 @@ const ApplyCasting = () => {
                 placeholder="Expected Salary"
                 value={expectedSalary}
                 onChange={(e) => setExpectedSalary(e.target.value)}
-                required
+                // required
                 className="form-control"
               />
             </div>
@@ -224,7 +259,7 @@ const ApplyCasting = () => {
                 placeholder="Job Type"
                 value={jobType}
                 onChange={(e) => setJobType(e.target.value)}
-                required
+                // required
                 className="form-control"
               />
             </div>
@@ -236,7 +271,7 @@ const ApplyCasting = () => {
                 placeholder="Job Description"
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
-                required
+                // required
                 className="form-control"
               ></textarea>
             </div>
@@ -249,7 +284,7 @@ const ApplyCasting = () => {
                 onChange={handleImageChange}
                 className="form-control"
                 accept="image/*"
-                required
+                // required
               />
             </div>
             <div className="col-md-12 mt-3">
@@ -259,7 +294,7 @@ const ApplyCasting = () => {
                 onChange={handleLogoChange}
                 className="form-control"
                 accept="image/*"
-                required
+                // required
               />
             </div>
 
@@ -271,7 +306,7 @@ const ApplyCasting = () => {
                 onChange={handleVideoChange}
                 className="form-control"
                 accept="video/*"
-                required
+                // required
               />
             </div>
 
@@ -285,7 +320,7 @@ const ApplyCasting = () => {
                   name={platform}
                   value={socialLinks[platform]}
                   onChange={handleSocialLinkChange}
-                  required
+                  // required
                   className="form-control"
                 />
               </div>
