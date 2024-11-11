@@ -212,7 +212,7 @@ const SingleJobDetails = ({ jobId }) => {
                                             <li><i className="fa-thin fa-timer"></i> <span className="jm-job-review-label">Deadline : </span> <CountdownTimer deadline={casting.deadline} /></li>
                                         </ul>
                                         <div className="jm-job-sidebar-overview-buttons">
-                                            <Link to="/applyForCastingPage" className="jm-job-overview-btn">Apply Now <i className="fa-thin fa-arrow-right-long"></i></Link>
+                                            <Link to="/applyForCastingPage" state={{ jobId }} className="jm-job-overview-btn"> Apply Now <i className="fa-thin fa-arrow-right-long"></i></Link>
                                             <Link to="#" className="jm-job-overview-btn job-bookmark"><i className="fa-thin fa-bookmark"></i> Add Bookmark</Link>
                                         </div>
                                     </div>

@@ -1,16 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import { useLocation } from 'react-router-dom';
 import { MultiSelect } from 'react-multi-select-component';
+import DatePicker from 'react-datepicker';
 import axios from 'axios';
+import 'react-datepicker/dist/react-datepicker.css';
 import './ApplyCasting.css';
 
 const ApplyCasting = () => {
+  const location = useLocation();
+  const { jobId } = location.state || {};
+
+  console.log("The job id is:", jobId);
+
   const [jobTitle, setJobTitle] = useState('');
-  const [jobLocation, setJobLocation] = useState('');
+  const [jobLocation, setJobLocation] = useState([]);
   const [jobType, setJobType] = useState('');
-  const [jobCategory, setJobCategory] = useState('');
+  const [jobCategory, setJobCategory] = useState([]);
   const [expectedSalary, setExpectedSalary] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [companyName, setCompanyName] = useState('');
@@ -28,13 +34,13 @@ const ApplyCasting = () => {
   const [featuredImage, setFeaturedImage] = useState(null);
   const [companyLogo, setCompanyLogo] = useState(null);
   const [companyVideo, setCompanyVideo] = useState(null);
-
-  // New states for the questions
   const [education, setEducation] = useState('');
   const [workPlace, setWorkPlace] = useState('');
   const [jobDetails, setJobDetails] = useState('');
-
   
+  // New state variables for additional questions
+  const [question1, setQuestion1] = useState('');
+  const [question2, setQuestion2] = useState('');
 
   const handleImageChange = (e) => setFeaturedImage(e.target.files[0]);
   const handleLogoChange = (e) => setCompanyLogo(e.target.files[0]);
@@ -42,214 +48,229 @@ const ApplyCasting = () => {
 
   const handleSocialLinkChange = (e) => {
     const { name, value } = e.target;
-    setSocialLinks((prev) => ({ ...prev, [name]: value }));
+    setSocialLinks(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('operations', JSON.stringify({
-      query: `
-        mutation uploadMedia($file: Upload!, $userId: String!) {
-          uploadMedia(file: $file, userId: "cfa7c44a-daca-4790-85b2-beb92878929e") {
+    const token = localStorage.getItem('token');
+
+    try {
+      const formData = new FormData();
+
+      const query = `
+        mutation uploadImage($file: Upload!) {
+          uploadImage(file: $file, userId: "5dde9f90-15af-4759-93e4-bb5f39df7f46") {
             message
           }
         }
-      `,
-      variables: { file: null, userId: "cfa7c44a-daca-4790-85b2-beb92878929e" }
-    }));
-    
-    formData.append('map', JSON.stringify({ 0: ['variables.file'] }));
-    formData.append(0, featuredImage || companyLogo || companyVideo);
+      `;
 
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        'https://localhost:7111/graphql',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            "Authorization": `Bearer ${token}`,
-          },
-        }
+      formData.append(
+        "operations",
+        JSON.stringify({
+          query,
+          variables: { file: null },
+        })
       );
 
-      if (response.data.errors) {
-        toast.error('Error: ' + response.data.errors[0].message);
+      formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
+      formData.append("0", featuredImage);
+
+      const response = await fetch("https://localhost:7111/graphql", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          'GraphQL-Preflight': 'true',
+          "Apollo-Require-Preflight": "true",
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (result.errors) {
+        console.error("Error uploading photo:", result.errors[0].message);
+        toast.error("Error uploading photo: " + result.errors[0].message);
       } else {
-        toast.success(response.data.data.uploadMedia.message || 'Job posted successfully');
+        console.log("Photo uploaded successfully:", result.data.uploadImage.message);
+        toast.success(result.data.uploadImage.message || "Photo uploaded successfully");
       }
     } catch (error) {
-      toast.error('An error occurred while uploading the media.');
+      console.error("An error occurred while uploading the photo.", error);
+      toast.error("An error occurred while uploading the photo.");
     }
   };
 
   return (
     <div className="jm-post-job-area pt-95 pb-60">
       <div className="container">
-        <h4 className="text-center">Apply for Casting Job</h4>
+        <h4 className="text-center">Apply for Casting Job - Job ID: {jobId}</h4>
         <form onSubmit={handleSubmit} className="jm-post-job-wrapper mb-40">
           <div className="row">
-            <div className="col-md-6">
+
+            {/* Job Title */}
+            <div className="col-md-12">
+              <label><strong>Job Title *</strong></label>
               <input
                 type="text"
                 placeholder="Job Title"
                 value={jobTitle}
                 onChange={(e) => setJobTitle(e.target.value)}
+                required
+                className="form-control"
               />
             </div>
-            <div className="col-md-6">
+
+            {/* Date Picker */}
+            <div className="col-md-12 mt-3">
+              <label><strong>Date *</strong></label>
               <DatePicker
                 selected={date}
-                onChange={(date) => setDate(date)}
+                onChange={(selectedDate) => setDate(selectedDate)}
                 placeholderText="Select Date"
                 className="form-control date-picker-input"
+                required
               />
             </div>
-            <div className="col-md-6">
+
+            {/* Job Location */}
+            <div className="col-md-12 mt-3">
+              <label><strong>Location *</strong></label>
               <MultiSelect
                 options={locationOptions}
                 value={jobLocation}
-                onChange={(selected) => setJobLocation(selected.map(option => option.value))}
+                onChange={(selected) => setJobLocation(selected)}
                 labelledBy="Select Location"
+                className="form-control"
               />
             </div>
-            <div className="col-md-6">
+
+            {/* Job Category */}
+            <div className="col-md-12 mt-3">
+              <label><strong>Category *</strong></label>
               <MultiSelect
                 options={categoryOptions}
                 value={jobCategory}
-                onChange={(selected) => setJobCategory(selected.map(option => option.value))}
+                onChange={(selected) => setJobCategory(selected)}
                 labelledBy="Select Category"
+                className="form-control"
               />
             </div>
-            <div className="col-md-6">
+
+            {/* Expected Salary */}
+            <div className="col-md-12 mt-3">
+              <label><strong>Expected Salary *</strong></label>
               <input
                 type="text"
                 placeholder="Expected Salary"
                 value={expectedSalary}
                 onChange={(e) => setExpectedSalary(e.target.value)}
+                required
+                className="form-control"
               />
             </div>
-            <div className="col-md-6">
+
+            {/* Job Type */}
+            <div className="col-md-12 mt-3">
+              <label><strong>Job Type *</strong></label>
               <input
                 type="text"
                 placeholder="Job Type"
                 value={jobType}
                 onChange={(e) => setJobType(e.target.value)}
+                required
+                className="form-control"
               />
             </div>
-            <div className="col-md-12">
+
+            {/* Job Description */}
+            <div className="col-md-12 mt-3">
+              <label><strong>Job Description *</strong></label>
               <textarea
                 placeholder="Job Description"
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
-              ></textarea>
-            </div>
-            
-            {/* Questions Section */}
-            <div className="col-md-12">
-              <label>Education (Primary/Secondary/Higher/Specialty) *</label>
-              <input
-                type="text"
-                value={education}
-                onChange={(e) => setEducation(e.target.value)}
-                placeholder="Enter your education level"
-              />
-            </div>
-            <div className="col-md-12">
-              <label>Workplace (last workplace if currently unemployed) *</label>
-              <input
-                type="text"
-                value={workPlace}
-                onChange={(e) => setWorkPlace(e.target.value)}
-                placeholder="Enter your last workplace"
-              />
-            </div>
-            <div className="col-md-12">
-              <label>Describe the nature of your work *</label>
-              <textarea
-                value={jobDetails}
-                onChange={(e) => setJobDetails(e.target.value)}
-                placeholder="Briefly describe your responsibilities"
+                required
+                className="form-control"
               ></textarea>
             </div>
 
             {/* File Uploads Section */}
-            <div className="col-md-12">
+            <div className="col-md-12 mt-3">
+              <label><strong>Featured Image *</strong></label>
               <input
                 type="file"
                 onChange={handleImageChange}
                 className="form-control"
                 accept="image/*"
+                required
               />
+            </div>
+            <div className="col-md-12 mt-3">
+              <label><strong>Company Logo *</strong></label>
               <input
                 type="file"
                 onChange={handleLogoChange}
-                className="form-control mt-3"
+                className="form-control"
                 accept="image/*"
+                required
               />
             </div>
-            
+
             {/* Video Upload Section */}
-            <div className="col-md-12">
-              <label>Upload a Video:</label>
+            <div className="col-md-12 mt-3">
+              <label><strong>Upload a Video *</strong></label>
               <input
                 type="file"
                 onChange={handleVideoChange}
-                className="form-control mt-3"
+                className="form-control"
                 accept="video/*"
+                required
               />
             </div>
 
             {/* Social Links */}
-            <div className="col-md-6">
+            {['linkedin', 'twitter', 'facebook', 'pinterest', 'instagram'].map((platform) => (
+              <div className="col-md-12 mt-3" key={platform}>
+                <label><strong>{platform.charAt(0).toUpperCase() + platform.slice(1)} *</strong></label>
+                <input
+                  type="text"
+                  placeholder={`${platform.charAt(0).toUpperCase() + platform.slice(1)} URL`}
+                  name={platform}
+                  value={socialLinks[platform]}
+                  onChange={handleSocialLinkChange}
+                  required
+                  className="form-control"
+                />
+              </div>
+            ))}
+
+            {/* Additional Questions Section */}
+            <div className="col-md-12 mt-3">
+              <label><strong>Why are you interested in this position? *</strong></label>
               <input
                 type="text"
-                placeholder="LinkedIn"
-                name="linkedin"
-                value={socialLinks.linkedin}
-                onChange={handleSocialLinkChange}
+                placeholder="Your answer"
+                value={question1}
+                onChange={(e) => setQuestion1(e.target.value)}
+                required
+                className="form-control"
               />
             </div>
-            <div className="col-md-6">
+            <div className="col-md-12 mt-3">
+              <label><strong>What relevant experience do you have? *</strong></label>
               <input
                 type="text"
-                placeholder="Twitter"
-                name="twitter"
-                value={socialLinks.twitter}
-                onChange={handleSocialLinkChange}
-              />
-            </div>
-            <div className="col-md-6">
-              <input
-                type="text"
-                placeholder="Facebook"
-                name="facebook"
-                value={socialLinks.facebook}
-                onChange={handleSocialLinkChange}
-              />
-            </div>
-            <div className="col-md-6">
-              <input
-                type="text"
-                placeholder="Pinterest"
-                name="pinterest"
-                value={socialLinks.pinterest}
-                onChange={handleSocialLinkChange}
-              />
-            </div>
-            <div className="col-md-6">
-              <input
-                type="text"
-                placeholder="Instagram"
-                name="instagram"
-                value={socialLinks.instagram}
-                onChange={handleSocialLinkChange}
+                placeholder="Your answer"
+                value={question2}
+                onChange={(e) => setQuestion2(e.target.value)}
+                required
+                className="form-control"
               />
             </div>
 
+            {/* Submit Button */}
             <div className="col-md-12 text-center mt-4">
               <button type="submit" className="jm-post-job-btn jm-theme-btn">
                 Submit Application
