@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 import { MultiSelect } from 'react-multi-select-component';
 import DatePicker from 'react-datepicker';
-import axios from 'axios';
 import 'react-datepicker/dist/react-datepicker.css';
 import './ApplyCasting.css';
 
@@ -37,10 +36,101 @@ const ApplyCasting = () => {
   const [education, setEducation] = useState('');
   const [workPlace, setWorkPlace] = useState('');
   const [jobDetails, setJobDetails] = useState('');
-  
-  // New state variables for additional questions
-  const [question1, setQuestion1] = useState('');
-  const [question2, setQuestion2] = useState('');
+
+  const [casting, setCasting] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({}); // Object to store answers for each question
+
+  useEffect(() => {
+    const fetchCastings = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const query = `
+          query {
+            castingDetails(castingId: ${jobId}) {
+              id
+              title
+              description
+              imageUrl
+              deadline
+              location
+            }
+          }
+        `;
+
+        console.log("Fetching casting data...");
+
+        const response = await fetch("https://localhost:7111/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ query }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          setCasting(result.data.castingDetails);
+        } else {
+          throw new Error("Failed to fetch casting data.");
+        }
+      } catch (error) {
+        console.error("Error fetching casting data:", error);
+        toast.error("Failed to fetch casting details.");
+      }
+    };
+
+    fetchCastings();
+  }, [jobId]);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const query = `
+          query{
+            castingQuestions(castingId: 1){
+              id
+              questionText
+            }
+          }
+        `;
+
+        console.log("Fetching casting questions data...");
+
+        const response = await fetch("https://localhost:7111/graphql", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ query }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          setQuestions(result.data.castingQuestions);
+        } else {
+          throw new Error("Failed to fetch casting questions.");
+        }
+      } catch (error) {
+        console.error("Error fetching casting questions:", error);
+        toast.error("Failed to fetch casting questions.");
+      }
+    };
+
+    fetchQuestions();
+  }, [jobId]);
+
+  const handleAnswerChange = (questionId, answer) => {
+    setAnswers(prevAnswers => ({
+      ...prevAnswers,
+      [questionId]: answer
+    }));
+  };
 
   const handleImageChange = (e) => setFeaturedImage(e.target.files[0]);
   const handleLogoChange = (e) => setCompanyLogo(e.target.files[0]);
@@ -53,62 +143,17 @@ const ApplyCasting = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitted answers:", answers); // Log answers for dynamic questions
 
-    const token = localStorage.getItem('token');
-
-    try {
-      const formData = new FormData();
-
-      const query = `
-        mutation uploadImage($file: Upload!) {
-          uploadImage(file: $file, userId: "5dde9f90-15af-4759-93e4-bb5f39df7f46") {
-            message
-          }
-        }
-      `;
-
-      formData.append(
-        "operations",
-        JSON.stringify({
-          query,
-          variables: { file: null },
-        })
-      );
-
-      formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
-      formData.append("0", featuredImage);
-
-      const response = await fetch("https://localhost:7111/graphql", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          'GraphQL-Preflight': 'true',
-          "Apollo-Require-Preflight": "true",
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-      if (result.errors) {
-        console.error("Error uploading photo:", result.errors[0].message);
-        toast.error("Error uploading photo: " + result.errors[0].message);
-      } else {
-        console.log("Photo uploaded successfully:", result.data.uploadImage.message);
-        toast.success(result.data.uploadImage.message || "Photo uploaded successfully");
-      }
-    } catch (error) {
-      console.error("An error occurred while uploading the photo.", error);
-      toast.error("An error occurred while uploading the photo.");
-    }
+    // Proceed with form submission logic here
   };
 
   return (
     <div className="jm-post-job-area pt-95 pb-60">
       <div className="container">
-        <h4 className="text-center">Apply for Casting Job - Job ID: {jobId}</h4>
+        <h4 className="text-center">Apply for {casting.title} - Job ID: {jobId}</h4>
         <form onSubmit={handleSubmit} className="jm-post-job-wrapper mb-40">
           <div className="row">
-
             {/* Job Title */}
             <div className="col-md-12">
               <label><strong>Job Title *</strong></label>
@@ -246,29 +291,19 @@ const ApplyCasting = () => {
               </div>
             ))}
 
-            {/* Additional Questions Section */}
-            <div className="col-md-12 mt-3">
-              <label><strong>Why are you interested in this position? *</strong></label>
-              <input
-                type="text"
-                placeholder="Your answer"
-                value={question1}
-                onChange={(e) => setQuestion1(e.target.value)}
-                required
-                className="form-control"
-              />
-            </div>
-            <div className="col-md-12 mt-3">
-              <label><strong>What relevant experience do you have? *</strong></label>
-              <input
-                type="text"
-                placeholder="Your answer"
-                value={question2}
-                onChange={(e) => setQuestion2(e.target.value)}
-                required
-                className="form-control"
-              />
-            </div>
+            {/* Dynamic Questions Section */}
+            {questions.map((question) => (
+              <div className="col-md-12 mt-3" key={question.id}>
+                <label><strong>{question.questionText}</strong></label>
+                <input
+                  type="text"
+                  placeholder="Your answer"
+                  value={answers[question.id] || ''}
+                  onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            ))}
 
             {/* Submit Button */}
             <div className="col-md-12 text-center mt-4">
