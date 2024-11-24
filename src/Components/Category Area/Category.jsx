@@ -11,6 +11,7 @@ const query = `
       imageUrl
       deadline
       location
+      isQuickAccess
     }
   }
 `;
@@ -55,46 +56,91 @@ const Category = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <section className="jm-category-area light-bg pt-85 pb-70">
-      <div className="container">
-        <div className="row">
-          <div className="col-12">
-            <div className="jm-section-title mb-40 text-center">
-              <h2 className="title mb-10">Castings</h2>
-              <p className="text">
-                Mauris ut cursus nunc. Morbi eleifend, ligula at consectetur vehicula
-              </p>
+    <>
+      {/* One Click Casting Section */}
+      <section className="jm-category-area light-bg pt-85 pb-70">
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <div className="jm-section-title mb-40 text-center">
+                <h2 className="title mb-10">Featured Castings</h2>
+                <p className="text">Explore exclusive opportunities curated for you!</p>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="row">
-          {castings.map((casting) => (
-            <div key={casting.id} className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6">
-              <div className="jm-category-item-new mb-30">
-                <div className="jm-category-item-img-new w_img">
-                  <Link to={`/jobDetailsPage/${casting.id}`}>
-                    <img src={casting.imageUrl} alt={casting.title} />
-                  </Link>
-                </div>
-                <div className="jm-category-item-content-new">
-                  <div className="jm-category-item-content-inner-new">
-                    <span className="jm-category-item-icon-new">
-                      <img src="https://static.vecteezy.com/system/resources/previews/007/688/855/non_2x/tv-logo-free-vector.jpg" alt="Icon" />
-                    </span>
-                    <h4 className="jm-cat-title-new">
-                      <Link to={`/jobDetailsPage/${casting.id}`}>{casting.title}</Link>
-                    </h4>
-                    <div className="jm-job-posted-new">
-                      Deadline: <CountdownTimer deadline={casting.deadline} />
+          <div className="row">
+            {castings
+              .filter((casting) => casting.isQuickAccess === false) // Replace this filter condition as needed
+              .map((casting) =>  (
+              <div key={casting.id} className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                <div className="jm-category-item-new mb-30">
+                  <div className="jm-category-item-img-new w_img">
+                    <Link to={`/jobDetailsPage/${casting.id}`}>
+                      <img src={casting.imageUrl} alt={casting.title} />
+                    </Link>
+                  </div>
+                  <div className="jm-category-item-content-new">
+                    <div className="jm-category-item-content-inner-new">
+                      <span className="jm-category-item-icon-new">
+                        <img src="https://static.vecteezy.com/system/resources/previews/007/688/855/non_2x/tv-logo-free-vector.jpg" alt="Icon" />
+                      </span>
+                      <h4 className="jm-cat-title-new">
+                        <Link to={`/jobDetailsPage/${casting.id}`}>{casting.title}</Link>
+                      </h4>
+                      <div className="jm-job-posted-new">
+                        Deadline: <CountdownTimer deadline={casting.deadline} />
                       </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* New Section: Featured Castings */}
+      <section className="jm-category-area light-bg pt-85 pb-70">
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <div className="jm-section-title mb-40 text-center">
+                <h2 className="title mb-10">Apply instantly with one click!</h2>
+                <p className="text">Apply instantly with one click!</p>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            {castings
+              .filter((casting) => casting.isQuickAccess === true) // Replace this filter condition as needed
+              .map((casting) => (
+                <div key={casting.id} className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                  <div className="jm-category-item-new mb-30">
+                    <div className="jm-category-item-img-new w_img">
+                      <Link to={`/jobDetailsPage/${casting.id}`}>
+                        <img src={casting.imageUrl} alt={casting.title} />
+                      </Link>
+                    </div>
+                    <div className="jm-category-item-content-new">
+                      <div className="jm-category-item-content-inner-new">
+                        <span className="jm-category-item-icon-new">
+                          <img src="https://static.vecteezy.com/system/resources/previews/007/688/855/non_2x/tv-logo-free-vector.jpg" alt="Icon" />
+                        </span>
+                        <h4 className="jm-cat-title-new">
+                          <Link to={`/jobDetailsPage/${casting.id}`}>{casting.title}</Link>
+                        </h4>
+                        <div className="jm-job-posted-new">
+                          Deadline: <CountdownTimer deadline={casting.deadline} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

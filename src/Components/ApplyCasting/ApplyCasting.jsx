@@ -48,7 +48,7 @@ const ApplyCasting = () => {
 
         const query = `
           query {
-            castingDetails(castingId: 1) {
+            castingDetails(castingId: ${jobId}) {
               id
               title
               description
@@ -92,7 +92,7 @@ const ApplyCasting = () => {
 
         const query = `
           query{
-            castingQuestions(castingId: 1){
+            castingQuestions(castingId: ${jobId}){
               id
               questionText
             }
@@ -162,7 +162,7 @@ const ApplyCasting = () => {
     `;
 
     try {
-      const response = await fetch("https://localhost:7111/graphql", {
+      const response = await fetch("https://localhost:7111/graphql",   {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
