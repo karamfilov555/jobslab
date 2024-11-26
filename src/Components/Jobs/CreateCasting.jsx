@@ -55,22 +55,20 @@ const CreateCasting = () => {
               useDefaultQuestions,
             },
             useDefaultImage,
-            image: null, // Placeholder, to be mapped later
+            image: castingImage ? null : undefined, // Don't include image if not uploaded
           },
         })
       );
   
-      // Map the file upload to the image variable
-      formData.append(
-        "map",
-        JSON.stringify({
-          "2": ["variables.image"],
-        })
-      );
-  
-      // Append the file
+      // Only map the image field if a file is uploaded
       if (castingImage) {
+        formData.append("map", JSON.stringify({
+          "2": ["variables.image"],
+        }));
         formData.append("2", castingImage); // Key '2' must match the map
+      } else {
+        // If no image is uploaded, we can skip adding the file data
+        formData.append("map", JSON.stringify({})); // Empty map for cases without image
       }
   
       const response = await fetch("https://localhost:7111/graphql", {
