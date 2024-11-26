@@ -27,6 +27,7 @@ import ResetPasswordPage from "./Pages/ResetPasswordPage";
 import ResetConfirmPasswordPage from "./Pages/ResetConfirmPasswordPage";
 import ProtectedRoute from './Context/ProtectedRoute';
 import ApplyFOrCastingPage from './Pages/ApplyForCastingPage';
+import CreateCasting from "./Pages/CreateCastingPage";
 
 import { useEffect } from "react";
 
@@ -80,6 +81,7 @@ function App() {
           <Route path="/contactPage" element={<ContactPage />} />
           <Route path="/candidateListPage" element={<CandidateListPage />} />
           <Route path="/candidateDetailsPage" element={<CandidateDetailsPage />} />
+          <Route path="/createcasting" element={<CreateCasting />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
       </>
