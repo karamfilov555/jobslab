@@ -13,6 +13,18 @@ const CreateCasting = () => {
   const [customQuestionsFile, setCustomQuestionsFile] = useState(null);
   const [castingImage, setCastingImage] = useState(null);
   const [useDefaultImage, setUseDefaultImage] = useState(true);
+  // New state to handle the Excel file
+  const [excelFile, setExcelFile] = useState(null);
+
+  const handleExcelFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setExcelFile(file); // Store the selected Excel file
+    } else {
+      setExcelFile(null);
+    }
+  };
+
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -39,8 +51,8 @@ const CreateCasting = () => {
         "operations",
         JSON.stringify({
           query: `
-            mutation CreateCasting($input: CreateCastingInput!, $useDefaultImage: Boolean!, $image: Upload) {
-                createCasting(input: $input, useDefaultImage: $useDefaultImage, image: $image) {
+            mutation CreateCasting($input: CreateCastingInput!, $useDefaultImage: Boolean!, $image: Upload, $excelFile: Upload) {
+                createCasting(input: $input, useDefaultImage: $useDefaultImage, image: $image, excelFile: $excelFile) {
                     message
                 }
             }               
@@ -56,21 +68,41 @@ const CreateCasting = () => {
             },
             useDefaultImage,
             image: castingImage ? null : undefined, // Don't include image if not uploaded
+            excelFile: excelFile ? null : undefined, // Don't include excel if not uploaded
           },
         })
       );
-  
+      
+
+      const map = {};
+      let fileIndex = 2;
+
       // Only map the image field if a file is uploaded
-      if (castingImage) {
-        formData.append("map", JSON.stringify({
-          "2": ["variables.image"],
-        }));
-        formData.append("2", castingImage); // Key '2' must match the map
-      } else {
-        // If no image is uploaded, we can skip adding the file data
-        formData.append("map", JSON.stringify({})); // Empty map for cases without image
+      if (castingImage && excelFile) {
+        map[fileIndex] = ["variables.image"];
+        formData.append(`${fileIndex}`, castingImage);
+        fileIndex++;
+
+        map[fileIndex] = ["variables.excelFile"];
+        formData.append(`${fileIndex}`, excelFile);
+      } 
+      else if (castingImage && excelFile === null){
+        map[fileIndex] = ["variables.image"];
+        formData.append(`${fileIndex}`, castingImage);
       }
-  
+      else if (castingImage === null && excelFile){
+        map[fileIndex] = ["variables.excelFile"];
+        formData.append(`${fileIndex}`, excelFile);
+      }
+      else {
+        // If no image is uploaded, we can skip adding the file data
+        formData.append(`${fileIndex}`, JSON.stringify({})); // Empty map for cases without image
+        fileIndex++;
+      }
+
+      
+      formData.append("map", JSON.stringify(map));
+
       const response = await fetch("https://localhost:7111/graphql", {
         method: "POST",
         headers: {
@@ -181,11 +213,12 @@ const CreateCasting = () => {
               {/* Upload Custom Questions */}
               {!useDefaultQuestions && (
                 <div className="col-xl-12 text-center">
-                  <label>Upload Custom Questions:</label>
+                  <label>Upload Excel File with Custom Questions (Optional):</label>
                   <input
+                    required={!useDefaultQuestions}
                     type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={(e) => setCustomQuestionsFile(e.target.files[0])}
+                    accept=".xlsx,.xls"
+                    onChange={handleExcelFileUpload}
                   />
                 </div>
               )}
