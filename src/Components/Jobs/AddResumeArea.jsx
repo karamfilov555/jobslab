@@ -365,7 +365,7 @@ const AddResumeArea = () => {
                 Submit
               </button>
             </div>
-             <div className="col-xl-12 text-center mb-3">
+             <div className="col-xl-12 text-center mb-3 pt-30">
             {photo && (
                 <div className="photo-preview-box">
                   <img src={photo} alt="Profile Preview" className="photo-preview" />
