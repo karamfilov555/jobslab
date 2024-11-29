@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { toast } from "react-toastify";
 import { withRouter } from "./withRouter"; // Import the HOC
 import "./register.css";
 
@@ -8,10 +9,15 @@ class Register extends Component {
     this.state = {
       Email: "",
       Password: "",
-      ConfirmPassword: "", // New state for confirm password
-      message: "", // State to hold the message
+      ConfirmPassword: "",
+      isAgency: false, // New state for checkbox
+      VAT: "", // New fields for agency
+      PhoneNumber: "",
+      ContactPerson: "",
+      message: "",
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -21,11 +27,16 @@ class Register extends Component {
     this.setState({ [name]: value });
   }
 
+  // Event for Checkbox
+  handleCheckboxChange(event) {
+    this.setState({ isAgency: event.target.checked });
+  }
+
   // Event for Submit
   async handleSubmit(event) {
     event.preventDefault();
 
-    const { Email, Password, ConfirmPassword } = this.state;
+    const { Email, Password, ConfirmPassword, isAgency, VAT, PhoneNumber, ContactPerson } = this.state;
 
     // Check if password and confirm password match
     if (Password !== ConfirmPassword) {
@@ -49,12 +60,15 @@ class Register extends Component {
       input: {
         email: Email,
         password: Password,
-        confirmPassword: ConfirmPassword,  // Include confirmPassword in the input
+        confirmPassword: ConfirmPassword,
+        isAgency: isAgency,
+        vat: isAgency ? VAT : null,
+        phoneNumber: isAgency ? PhoneNumber : null,
+        contactPerson: isAgency ? ContactPerson : null,
       },
     };
 
     try {
-      // Send the request to the GraphQL API
       const response = await fetch("https://localhost:7111/graphql", {
         method: "POST",
         headers: {
@@ -66,21 +80,26 @@ class Register extends Component {
       const result = await response.json();
 
       if (result.data) {
-        // Set success message in state
+        toast.success(result.data.register.message);
+        if(result.data.isAgency)
+        {
+          this.setState({
+            message: result.data.register.message,
+          });
+        }
+        else
+        {
         this.setState({
           message: result.data.register.message || "Registration successful!",
         });
-
-        // After successful registration, redirect to another page
+      }
         this.props.navigate("/loginPage");
       } else if (result.errors) {
-        // Set error message in state
         this.setState({
           message: "Error: " + result.errors[0].message,
         });
       }
     } catch (error) {
-      // Handle network or other errors
       this.setState({
         message: "Network error: " + error.message,
       });
@@ -88,6 +107,8 @@ class Register extends Component {
   }
 
   render() {
+    const { isAgency, VAT, PhoneNumber, ContactPerson, message } = this.state;
+
     return (
       <section className="ftco-section">
         <div className="container">
@@ -133,6 +154,58 @@ class Register extends Component {
                     />
                   </div>
 
+                  <div className="form-group mb-4">
+                    <input
+                      type="checkbox"
+                      id="isAgency"
+                      name="isAgency"
+                      checked={isAgency}
+                      onChange={this.handleCheckboxChange}
+                    />
+                    <label htmlFor="isAgency" className="ms-2">
+                      I am registering as an agency
+                    </label>
+                  </div>
+
+                  {/* Conditionally render additional fields if isAgency is true */}
+                  {isAgency && (
+                    <>
+                      <div className="form-group mb-4">
+                        <input
+                          type="text"
+                          className="form-control rounded-left"
+                          placeholder="VAT"
+                          name="VAT"
+                          value={VAT}
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group mb-4">
+                        <input
+                          type="text"
+                          className="form-control rounded-left"
+                          placeholder="Phone Number"
+                          name="PhoneNumber"
+                          value={PhoneNumber}
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="form-group mb-4">
+                        <input
+                          type="text"
+                          className="form-control rounded-left"
+                          placeholder="Contact Person"
+                          name="ContactPerson"
+                          value={ContactPerson}
+                          onChange={this.handleChange}
+                          required
+                        />
+                      </div>
+                    </>
+                  )}
+
                   <div className="form-group d-flex justify-content-center">
                     <button
                       type="submit"
@@ -142,10 +215,9 @@ class Register extends Component {
                     </button>
                   </div>
                 </form>
-                {/* Display the message */}
-                {this.state.message && (
+                {message && (
                   <div className="alert alert-info mt-3">
-                    {this.state.message}
+                    {message}
                   </div>
                 )}
               </div>

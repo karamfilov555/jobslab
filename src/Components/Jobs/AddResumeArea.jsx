@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { jwtDecode } from 'jwt-decode';
 import { MultiSelect } from 'react-multi-select-component';
 import './AddResumeArea.css'; // Ensure your CSS file is linked here
 
@@ -141,7 +142,9 @@ const AddResumeArea = () => {
     const formattedDate = date ? date.toISOString().split('T')[0] : null;
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
+      const decodedToken = jwtDecode(token); // Use named import
+      const userId = decodedToken.nameid;
       const response = await fetch('https://localhost:7111/graphql', {
         method: 'POST',
         headers: {
@@ -152,7 +155,7 @@ const AddResumeArea = () => {
           query: `
             mutation {
               upsertUserProfile(
-                userId: "c4ce9d2b-90dd-4dd4-869e-c94b0796d61a",
+                userId: "${userId}",
                 input: {
                   dateOfBirth: "${formattedDate}",
                   eyeColor: "${eyeColor}",
@@ -163,9 +166,9 @@ const AddResumeArea = () => {
                   height: ${height},
                   weight: ${weight},
                   location: "${locations.join(', ')}",
-                  languages: [${languages.map(lang => `"${lang}"`).join(',')}],
-                  skills: [${skills.map(skill => `"${skill}"`).join(',')}],
-                  measurements: "${measurements}"
+                  languages: [${languages}],
+                  skills: [${skills}],
+                  measurements: ${measurements}
                 }
               ) {
                 message
@@ -296,19 +299,19 @@ const AddResumeArea = () => {
             <div className="col-xl-12">
               <label>Languages:</label>
               <MultiSelect
-                options={languageOptions}
-                value={languages.map(language => ({ value: language, label: language }))}
-                onChange={selected => setLanguages(selected.map(option => option.value))}
-                labelledBy="Select your languages"
+                 options={languageOptions}
+                 value={languageOptions.filter(option => languages.includes(option.value))} // Properly map selected values
+                 onChange={(selected) => setLanguages(selected.map(option => option.value))} // Map selected values to state
+                 labelledBy="Select your languages"
               />
             </div>
             <div className="col-xl-12">
               <label>Skills:</label>
               <MultiSelect
-                options={skillOptions}
-                value={skills.map(skill => ({ value: skill, label: skill }))}
-                onChange={selected => setSkills(selected.map(option => option.value))}
-                labelledBy="Select your skills"
+               options={skillOptions}
+               value={skillOptions.filter(option => skills.includes(option.value))} // Properly map selected values
+               onChange={(selected) => setSkills(selected.map(option => option.value))} // Map selected values to state
+               labelledBy="Select your skills"
               />
             </div>
             <br></br>
