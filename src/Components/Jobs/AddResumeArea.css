@@ -1,63 +1,62 @@
-/* Ensure multi-select dropdown and container align correctly */
-.multiselect-container {
+/* Wrapper Styling */
+.jm-post-job-wrapper {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Title Styling */
+.jm-job-acc-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
   margin-bottom: 20px;
 }
 
-.multiselect__control {
-  min-height: 50px; /* Adjust height for better visibility */
-}
-
-.multiselect-container .multiselect__menu {
-  max-height: 150px; /* Limit dropdown height to prevent overflow */
-  overflow-y: auto; /* Add scrollbar for long dropdowns */
-}
-
-/* Ensure proper alignment */
-.multiselect-container label {
-  font-size: 14px;
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
-}
-
-.multiselect-container .multiselect__menu,
-.multiselect-container .multiselect__control {
-  width: 100%; /* Match the width of the input fields */
-  box-sizing: border-box; /* Ensure padding doesn't break layout */
-}
-
-/* Additional alignment for fields */
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group input,
-.form-group select {
+/* Uniform Input Fields */
+.uniform-input {
   width: 100%;
-  padding: 8px;
-  border-radius: 5px;
+  padding: 10px;
   border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-.existing-photos-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-}
-
-.photo-item img {
-  max-width: 100px;
-  max-height: 100px;
-  object-fit: cover;
   border-radius: 5px;
-  border: 1px solid #ddd;
+  font-size: 14px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  transition: border-color 0.3s ease;
 }
 
-/* Add spacing around submit button */
-.jm-post-job-btn {
-  margin-top: 20px;
-  padding: 10px 15px;
-  font-size: 16px;
+.uniform-input:focus {
+  border-color: #007bff;
+  outline: none;
 }
+
+/* MultiSelect Dropdown */
+.multi-select-override .rmsc {
+  width: 100%;
+  text-align: left;
+}
+
+.multi-select-override .rmsc .dropdown-heading {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.multi-select-override .rmsc .dropdown-container {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Submit Button */
+.jm-post-job-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+

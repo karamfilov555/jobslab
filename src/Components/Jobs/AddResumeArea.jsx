@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import Select from 'react-select';
 import { jwtDecode } from 'jwt-decode';
-import { MultiSelect } from 'react-multi-select-component';
-import './AddResumeArea.css'; // Ensure your CSS file is linked here
+import './AddResumeArea.css';
 
 const AddResumeArea = () => {
   const [firstName, setFirstName] = useState('');
@@ -25,17 +25,15 @@ const AddResumeArea = () => {
   const [photo, setPhoto] = useState(null);
   const [existingPhotos, setExistingPhotos] = useState([]);
 
-  // Fetch data for multi-select options
   useEffect(() => {
     const fetchMultiselectOptions = async () => {
       try {
         const token = localStorage.getItem('token');
-        console.log(token);
         const response = await fetch('https://localhost:7111/graphql', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             query: `
@@ -47,7 +45,7 @@ const AddResumeArea = () => {
                 }
               }
             `
-          })
+          }),
         });
 
         const result = await response.json();
@@ -55,24 +53,24 @@ const AddResumeArea = () => {
         if (result.errors) {
           toast.error('Failed to load multiselect options');
         } else {
-          const fetchedLanguages = result.data.multiselectsOptions.languages.map(language => ({
-            value: language,
-            label: language.replace(/_/g, ' ')
-          }));
-
-          const fetchedSkills = result.data.multiselectsOptions.skills.map(skill => ({
-            value: skill,
-            label: skill.replace(/_/g, ' ')
-          }));
-
-          const fetchedLocations = result.data.multiselectsOptions.locations.map(location => ({
-            value: location,
-            label: location.replace(/_/g, ' ')
-          }));
-
-          setLanguageOptions(fetchedLanguages);
-          setSkillOptions(fetchedSkills);
-          setLocationOptions(fetchedLocations);
+          setLanguageOptions(
+            result.data.multiselectsOptions.languages.map((language) => ({
+              value: language,
+              label: language.replace(/_/g, ' '),
+            }))
+          );
+          setSkillOptions(
+            result.data.multiselectsOptions.skills.map((skill) => ({
+              value: skill,
+              label: skill.replace(/_/g, ' '),
+            }))
+          );
+          setLocationOptions(
+            result.data.multiselectsOptions.locations.map((location) => ({
+              value: location,
+              label: location.replace(/_/g, ' '),
+            }))
+          );
         }
       } catch (error) {
         toast.error('An error occurred while fetching options');
@@ -81,28 +79,11 @@ const AddResumeArea = () => {
 
     const fetchExistingPhotos = async () => {
       try {
-        // Replace with actual API call to fetch user's existing photos
-        // const token = localStorage.getItem('token');
-        // const response = await fetch('https://localhost:7111/api/user/photos', {
-        //   headers: {
-        //     "Authorization": `Bearer ${token}`
-        //   }
-        // });
-        // const result = await response.json();
-        const resutl = [
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg',
-          'https://www.shutterstock.com/image-vector/cool-vector-casting-concept-illustration-260nw-742767343.jpg'
-        ]
-        setExistingPhotos(resutl); // Assuming result contains an array of photo URLs
+        const result = [
+          'https://via.placeholder.com/150',
+          'https://via.placeholder.com/150',
+        ];
+        setExistingPhotos(result);
       } catch (error) {
         toast.error('Failed to load existing photos');
       }
@@ -132,8 +113,8 @@ const AddResumeArea = () => {
       !weight ||
       locations.length === 0 ||
       languages.length === 0 ||
-      skills.length === 0 ||
-      !measurements
+      skills.length === 0 
+      // !measurements
     ) {
       toast.error('Please fill all the required fields');
       return;
@@ -195,13 +176,13 @@ const AddResumeArea = () => {
       <div className="container">
         <div className="row align-items-center justify-content-center text-center">
           <div className="col-xl-8">
-            <h4 className="jm-job-acc-title">Create your profile and put it online.</h4>
+            <h4 className="jm-job-acc-title">Create Your Profile</h4>
           </div>
         </div>
         <div className="jm-post-job-wrapper mb-40">
           <div className="row">
             <div className="col-xl-12 text-center mb-3">
-              {photo && (
+            {photo && (
                 <div className="photo-preview-box">
                   <img src={photo} alt="Profile Preview" className="photo-preview" />
                 </div>
@@ -227,6 +208,7 @@ const AddResumeArea = () => {
             <div className="col-xl-6 col-md-6">
               <input
                 type="text"
+                className="uniform-input"
                 placeholder="First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -235,6 +217,7 @@ const AddResumeArea = () => {
             <div className="col-xl-6 col-md-6">
               <input
                 type="text"
+                className="uniform-input"
                 placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -244,13 +227,14 @@ const AddResumeArea = () => {
               <DatePicker
                 selected={date}
                 onChange={(date) => setDate(date)}
-                placeholderText="Date of birth"
-                className="form-control date-picker-input"
+                placeholderText="Date of Birth"
+                className="uniform-input"
               />
             </div>
             <div className="col-xl-6 col-md-6">
               <input
                 type="text"
+                className="uniform-input"
                 placeholder="Eye Color"
                 value={eyeColor}
                 onChange={(e) => setEyeColor(e.target.value)}
@@ -259,13 +243,18 @@ const AddResumeArea = () => {
             <div className="col-xl-6 col-md-6">
               <input
                 type="text"
+                className="uniform-input"
                 placeholder="Hair Color"
                 value={hairColor}
                 onChange={(e) => setHairColor(e.target.value)}
               />
             </div>
             <div className="col-xl-6 col-md-6">
-              <select value={gender} onChange={(e) => setGender(e.target.value)}>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="uniform-input"
+              >
                 <option value="MALE">Male</option>
                 <option value="FEMALE">Female</option>
                 <option value="OTHER">Other</option>
@@ -274,6 +263,7 @@ const AddResumeArea = () => {
             <div className="col-xl-6 col-md-6">
               <input
                 type="text"
+                className="uniform-input"
                 placeholder="Height (in cm)"
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
@@ -282,6 +272,7 @@ const AddResumeArea = () => {
             <div className="col-xl-6 col-md-6">
               <input
                 type="text"
+                className="uniform-input"
                 placeholder="Weight (in kg)"
                 value={weight}
                 onChange={(e) => setWeight(e.target.value)}
@@ -289,29 +280,41 @@ const AddResumeArea = () => {
             </div>
             <div className="col-xl-12">
               <label>Location:</label>
-              <MultiSelect
+              <Select
                 options={locationOptions}
-                value={locations.map(location => ({ value: location, label: location }))}
-                onChange={selected => setLocations(selected.map(option => option.value))}
-                labelledBy="Select your locations"
+                isMulti
+                value={locationOptions.filter((option) =>
+                  locations.includes(option.value)
+                )}
+                onChange={(selected) =>
+                  setLocations(selected.map((option) => option.value))
+                }
               />
             </div>
             <div className="col-xl-12">
               <label>Languages:</label>
-              <MultiSelect
-                 options={languageOptions}
-                 value={languageOptions.filter(option => languages.includes(option.value))} // Properly map selected values
-                 onChange={(selected) => setLanguages(selected.map(option => option.value))} // Map selected values to state
-                 labelledBy="Select your languages"
+              <Select
+                options={languageOptions}
+                isMulti
+                value={languageOptions.filter((option) =>
+                  languages.includes(option.value)
+                )}
+                onChange={(selected) =>
+                  setLanguages(selected.map((option) => option.value))
+                }
               />
             </div>
-            <div className="col-xl-12">
+            <div className="col-xl-12 mb-4">
               <label>Skills:</label>
-              <MultiSelect
-               options={skillOptions}
-               value={skillOptions.filter(option => skills.includes(option.value))} // Properly map selected values
-               onChange={(selected) => setSkills(selected.map(option => option.value))} // Map selected values to state
-               labelledBy="Select your skills"
+              <Select
+                options={skillOptions}
+                isMulti
+                value={skillOptions.filter((option) =>
+                  skills.includes(option.value)
+                )}
+                onChange={(selected) =>
+                  setSkills(selected.map((option) => option.value))
+                }
               />
             </div>
             <br></br>
@@ -330,10 +333,9 @@ const AddResumeArea = () => {
             </div>
             <br></br>
             <br></br>
-            <div className="col-xl-12">
+            <div className="col-xl-12 text-center">
               <button
                 className="jm-post-job-btn jm-theme-btn"
-                type="submit"
                 onClick={handleFormSubmit}
               >
                 Submit
