@@ -7,15 +7,12 @@ const Breadcrumb = ({topic,topicSpan}) => {
             <div className="row">
                 <div className="col-12">
                     <div className="jm-breadcrumb-wrap pt-105 pb-115">
-                        <h2 className="jm-breadcrumb-title">{topic}</h2>
-                        <div className="jm-breadcrumb-list">
                             <a href="jobslab-index.html">Home</a>
                             <span>{topicSpan}</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
     </section>
   )
 }

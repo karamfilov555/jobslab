@@ -22,6 +22,7 @@ const AddResumeArea = () => {
   const [skills, setSkills] = useState([]);
   const [skillOptions, setSkillOptions] = useState([]);
   const [measurements, setMeasurements] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [photo, setPhoto] = useState(null);
   const [existingPhotos, setExistingPhotos] = useState([]);
 
@@ -77,8 +78,28 @@ const AddResumeArea = () => {
       }
     };
 
-    const fetchExistingPhotos = async () => {
+    const fetchUserDetails = async () => {
       try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('https://localhost:7111/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            query: `
+              query {
+                multiselectsOptions {
+                  skills
+                  languages
+                  locations
+                }
+              }
+            `
+          }),
+        });
+        
         const result = [
           'https://via.placeholder.com/150',
           'https://via.placeholder.com/150',
@@ -90,7 +111,7 @@ const AddResumeArea = () => {
     };
 
     fetchMultiselectOptions();
-    fetchExistingPhotos();
+    fetchUserDetails();
   }, []);
 
   const handlePhotoChange = (e) => {
@@ -113,8 +134,9 @@ const AddResumeArea = () => {
       !weight ||
       locations.length === 0 ||
       languages.length === 0 ||
-      skills.length === 0 
-      // !measurements
+      skills.length === 0  ||
+      !measurements ||
+      !phoneNumber
     ) {
       toast.error('Please fill all the required fields');
       return;
@@ -150,6 +172,7 @@ const AddResumeArea = () => {
                   languages: [${languages}],
                   skills: [${skills}],
                   measurements: ${measurements}
+                  phoneNumber: "${phoneNumber}"
                 }
               ) {
                 message
@@ -181,15 +204,7 @@ const AddResumeArea = () => {
         </div>
         <div className="jm-post-job-wrapper mb-40">
           <div className="row">
-            <div className="col-xl-12 text-center mb-3">
-            {photo && (
-                <div className="photo-preview-box">
-                  <img src={photo} alt="Profile Preview" className="photo-preview" />
-                </div>
-              )}
-              <input type="file" accept="image/*" onChange={handlePhotoChange} />
-            </div>
-
+           
             <div className="col-xl-12 text-center mb-3">
               <h5>Your Existing Photos</h5>
               <div className="existing-photos-list">
@@ -204,7 +219,7 @@ const AddResumeArea = () => {
                 )}
               </div>
             </div>
-
+            
             <div className="col-xl-6 col-md-6">
               <input
                 type="text"
@@ -250,16 +265,15 @@ const AddResumeArea = () => {
               />
             </div>
             <div className="col-xl-6 col-md-6">
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
+              <input
+                type="text"
                 className="uniform-input"
-              >
-                <option value="MALE">Male</option>
-                <option value="FEMALE">Female</option>
-                <option value="OTHER">Other</option>
-              </select>
+                placeholder="Phone number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
             </div>
+            
             <div className="col-xl-6 col-md-6">
               <input
                 type="text"
@@ -278,6 +292,28 @@ const AddResumeArea = () => {
                 onChange={(e) => setWeight(e.target.value)}
               />
             </div>
+            <div className="col-xl-6 col-md-6">
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="uniform-input"
+              >
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div className="col-xl-6 col-md-6">
+              <select value={measurements} onChange={(e) => setMeasurements(e.target.value)}>
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+              </select>
+            </div>
+            
             <div className="col-xl-12">
               <label>Location:</label>
               <Select
@@ -317,20 +353,8 @@ const AddResumeArea = () => {
                 }
               />
             </div>
-            <br></br>
-            <br></br>
-            <br></br>
-            <div className="col-xl-6 col-md-6">
-              <label>Measurements:</label>
-              <select value={measurements} onChange={(e) => setMeasurements(e.target.value)}>
-                <option value="XS">XS</option>
-                <option value="S">S</option>
-                <option value="M">M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
-                <option value="XXL">XXL</option>
-              </select>
-            </div>
+            
+            
             <br></br>
             <br></br>
             <div className="col-xl-12 text-center">
@@ -339,6 +363,21 @@ const AddResumeArea = () => {
                 onClick={handleFormSubmit}
               >
                 Submit
+              </button>
+            </div>
+             <div className="col-xl-12 text-center mb-3">
+            {photo && (
+                <div className="photo-preview-box">
+                  <img src={photo} alt="Profile Preview" className="photo-preview" />
+                </div>
+              )}
+              <input type="file" accept="image/*" onChange={handlePhotoChange} />
+            </div>
+            <div className= "col-xl-12 text-center">
+  <button className="btn btn-primary"
+                onClick={handleFormSubmit}
+              >
+                Upload photos
               </button>
             </div>
           </div>
