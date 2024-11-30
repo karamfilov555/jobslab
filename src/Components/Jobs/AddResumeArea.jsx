@@ -81,6 +81,10 @@ const AddResumeArea = () => {
     const fetchUserDetails = async () => {
       try {
         const token = localStorage.getItem('token');
+        const decodedToken = jwtDecode(token);
+        const userId = decodedToken.nameid;
+
+        console.log("fetching client data")
         const response = await fetch('https://localhost:7111/graphql', {
           method: 'POST',
           headers: {
@@ -90,23 +94,50 @@ const AddResumeArea = () => {
           body: JSON.stringify({
             query: `
               query {
-                multiselectsOptions {
-                  skills
-                  languages
-                  locations
+               	userProfile(userId: "${userId}"){
+                  id
+                  userId
+                  firstName
+                  lastName
+                  initials
+                  gender
+                  eyeColor
+			            hairColor
+                  phoneNumber
+                  dateOfBirth
+                  height
+                  weight
+                  userImages{
+                    imageUrl
+                  }
                 }
               }
             `
           }),
         });
         
+        const result = await response.json();
+        
+        if (result.data.userProfile) {
+          const userImages = result.data.userProfile.userImages.map((image) => image.imageUrl);
+
+          setFirstName(result.data.userProfile.firstName);
+          setLastName(result.data.userProfile.lastName);
+          setDate(result.data.userProfile.dateOfBirth)
+          setEyeColor(result.data.userProfile.eyeColor);
+          setHairColor(result.data.userProfile.hairColor);
+          setWeight(result.data.userProfile.weight);
+          setHeight(result.data.userProfile.height);
+          setPhoneNumber(result.data.userProfile.phoneNumber);
+
+          setExistingPhotos(userImages);
+        }
+      } catch (error) {
         const result = [
           'https://via.placeholder.com/150',
           'https://via.placeholder.com/150',
         ];
         setExistingPhotos(result);
-      } catch (error) {
-        toast.error('Failed to load existing photos');
       }
     };
 
